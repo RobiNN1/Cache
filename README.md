@@ -32,3 +32,7 @@ if ($cache->isConnected()) {
     //$cache->flush(); // Purge whole cache
 }
 ```
+
+## Requirements
+
+PHP +7.4
