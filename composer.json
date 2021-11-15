@@ -1,0 +1,21 @@
+{
+    "name": "robinn/cache",
+    "description": "Simple cache library",
+    "keywords": ["cache", "file", "redis", "memcached"],
+    "authors": [
+        {
+            "name": "Róbert Kelčák",
+            "email": "robo@kelcak.com",
+            "homepage": "https://kelcak.com"
+        }
+    ],
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "classmap": ["src/"]
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^7.4 || ^8"
+    }
+}
