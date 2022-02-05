@@ -92,7 +92,7 @@ class RedisCache implements ICache {
                 $this->redis->set($key, $data, $seconds);
             }
         } else {
-            $this->redis->set($key, $data, $seconds);
+            $this->redis->set($key, $data);
         }
     }
 

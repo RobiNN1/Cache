@@ -15,7 +15,7 @@ use RobiNN\Cache\ICache;
 
 class MemcacheCache implements ICache {
     /**
-     * @var \Memcache
+     * @var \Memcache|\Memcached
      */
     private $memcache;
 
@@ -58,8 +58,8 @@ class MemcacheCache implements ICache {
 
             $this->memcache->addServer($host, $port);
 
-            $stats = $this->memcache->getStats();
-            $this->connection = isset($stats) && (!empty($stats['pid']) && $stats['pid'] > 0);
+            $stats = @$this->memcache->getStats();
+            $this->connection = !empty($stats) && (!empty($stats['pid']) && $stats['pid'] > 0);
         }
     }
 
@@ -92,15 +92,15 @@ class MemcacheCache implements ICache {
                     $this->memcache->set($key.'_time', time(), $seconds);
                     $this->memcache->set($key, $data, $seconds);
                 } else {
-                    $this->memcache->set($key.'_time', time(), null, $seconds);
-                    $this->memcache->set($key, $data, null, $seconds);
+                    $this->memcache->set($key.'_time', time(), 0, $seconds);
+                    $this->memcache->set($key, $data, 0, $seconds);
                 }
             }
         } else {
             if ($this->is_memcached) {
                 $this->memcache->set($key, $data, $seconds);
             } else {
-                $this->memcache->set($key, $data, null, $seconds);
+                $this->memcache->set($key, $data, 0, $seconds);
             }
         }
     }
