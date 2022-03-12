@@ -1,5 +1,7 @@
 # Simple cache
 
+![Visitor Badge](https://visitor-badge.laobi.icu/badge?page_id=RobiNN1.Cache)
+
 ## Installation
 
 ```
