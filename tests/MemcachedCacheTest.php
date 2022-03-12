@@ -27,13 +27,15 @@ final class MemcachedCacheTest extends TestCase {
         }
     }
 
+    public function testConnection(): void {
+        $this->assertTrue($this->cache->isConnected());
+    }
+
     public function testSetterGetter(): void {
         $key = 'item';
         $data = 'itemvalue';
 
         $this->cache->set($key, $data);
-
-        $this->assertTrue($this->cache->isConnected());
 
         $this->assertTrue($this->cache->has($key));
 
