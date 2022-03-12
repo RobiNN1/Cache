@@ -12,6 +12,7 @@ composer require robinn/cache
 
 ```php
 $cache = new RobiNN\Cache\Cache([
+    // Available config options
     'storage'        => 'file', // file|redis|memcache
     'memcache_hosts' => ['localhost:11211'], // e.g. ['localhost:11211', '192.168.1.100:11211', 'unix:///var/tmp/memcached.sock']
     'redis_hosts'    => ['localhost:6379'], // e.g. ['localhost:6379', '192.168.1.100:6379:1:passwd']
