@@ -21,7 +21,7 @@ final class RedisCacheTest extends TestCase {
         try {
             $this->cache = new Cache([
                 'storage'     => 'redis',
-                'redis_hosts' => ['localhost:6379'],
+                'redis_hosts' => ['127.0.0.1:6379'],
             ]);
         } catch (Exception $e) {
         }

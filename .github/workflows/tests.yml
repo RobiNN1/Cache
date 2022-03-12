@@ -8,11 +8,11 @@ jobs:
 
     services:
       memcached:
-        image: memcached:1.6-alpine
+        image: memcached
         ports:
           - 11211:11211
       redis:
-        image: redis:5.0
+        image: redis
         ports:
           - 6379:6379
         options: --entrypoint redis-server

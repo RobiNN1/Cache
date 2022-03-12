@@ -21,7 +21,7 @@ final class MemcachedCacheTest extends TestCase {
         try {
             $this->cache = new Cache([
                 'storage'        => 'memcache',
-                'memcache_hosts' => ['localhost:11211'],
+                'memcache_hosts' => ['127.0.0.1:11211'],
             ]);
         } catch (Exception $e) {
         }
