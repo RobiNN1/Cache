@@ -10,5 +10,7 @@
 
 namespace RobiNN\Cache;
 
-class CacheException extends \Exception {
+use Exception;
+
+class CacheException extends Exception {
 }

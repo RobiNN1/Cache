@@ -16,7 +16,16 @@ interface ICache {
      *
      * @return bool
      */
-    public function isConnected();
+    public function isConnected(): bool;
+
+    /**
+     * Check if the data is cached
+     *
+     * @param string $key cache key
+     *
+     * @return bool
+     */
+    public function has(string $key): bool;
 
     /**
      * Save data in cache
@@ -24,8 +33,10 @@ interface ICache {
      * @param string $key cache key
      * @param mixed  $data
      * @param int    $seconds
+     *
+     * @return void
      */
-    public function set(string $key, $data, int $seconds);
+    public function set(string $key, $data, int $seconds): void;
 
     /**
      * Return data by key
@@ -40,11 +51,15 @@ interface ICache {
      * Delete data from cache
      *
      * @param string $key
+     *
+     * @return bool
      */
-    public function delete(string $key);
+    public function delete(string $key): bool;
 
     /**
      * Delete all data from cache
+     *
+     * @return void
      */
-    public function flush();
+    public function flush(): void;
 }

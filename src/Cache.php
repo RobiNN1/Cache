@@ -12,21 +12,21 @@ namespace RobiNN\Cache;
 
 class Cache {
     /**
+     * @const string Cache version.
+     */
+    public const VERSION = '1.0.2';
+
+    /**
      * Class name
      *
      * @var object
      */
-    private $cache;
+    private object $cache;
 
     /**
      * @var array
      */
     private array $config;
-
-    /**
-     * @var mixed
-     */
-    static protected $instance;
 
     /**
      * Cache constructor.
@@ -47,25 +47,12 @@ class Cache {
             throw new CacheException('Can\'t find cache storage in config.');
         }
 
-        $path = __DIR__.'/Storage/'.$this->config['storage'].'.php';
-
-        if (file_exists($path)) {
+        if (is_file(__DIR__.'/Storage/'.$this->config['storage'].'.php')) {
             $class = '\\RobiNN\\Cache\\Storage\\'.$this->config['storage'];
             $this->cache = new $class($this->config);
         } else {
-            throw new CacheException('Cache file '.$path.' not found');
+            throw new CacheException('Cache driver '.$this->config['storage'].' not found');
         }
-    }
-
-    /**
-     * @return Cache
-     */
-    public static function getInstance(): Cache {
-        if (!self::$instance) {
-            self::$instance = new Cache();
-        }
-
-        return self::$instance;
     }
 
     /**
@@ -78,11 +65,24 @@ class Cache {
     }
 
     /**
+     * Check if the data is cached
+     *
+     * @param string $key cache key
+     *
+     * @return bool
+     */
+    public function has(string $key): bool {
+        return $this->cache->has($key);
+    }
+
+    /**
      * Save data in cache
      *
      * @param string $key cache key
      * @param mixed  $data
      * @param int    $seconds
+     *
+     * @return void
      */
     public function set(string $key, $data, int $seconds = 0): void {
         $this->cache->set($key, $data, $seconds);
@@ -103,13 +103,17 @@ class Cache {
      * Delete data from cache
      *
      * @param string $key
+     *
+     * @return bool
      */
-    public function delete(string $key): void {
-        $this->cache->delete($key);
+    public function delete(string $key): bool {
+        return (bool)$this->cache->delete($key);
     }
 
     /**
      * Delete all data from cache
+     *
+     * @return void
      */
     public function flush(): void {
         $this->cache->flush();

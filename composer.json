@@ -11,9 +11,14 @@
       "homepage": "https://kelcak.com"
     }
   ],
-  "minimum-stability": "stable",
+  "support": {
+    "issues": "https://github.com/RobiNN1/Cache/issues",
+    "source": "https://github.com/RobiNN1/Cache"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "require": {
-    "php": "^7.4|^8",
+    "php": "^7.4||^8.0",
     "ext-json": "*"
   },
   "suggest": {
@@ -22,11 +27,21 @@
     "ext-redis": "Required to use the redis cache driver."
   },
   "require-dev": {
-    "phpstan/phpstan": "^1.4"
+    "phpstan/phpstan": "^1.4",
+    "phpunit/phpunit": "^9"
   },
   "autoload": {
     "psr-4": {
       "RobiNN\\Cache\\": "src/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "phpstan": "phpstan",
+    "test": "phpunit"
   }
 }

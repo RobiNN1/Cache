@@ -19,6 +19,11 @@ class FileCache implements ICache {
     private string $path;
 
     /**
+     * @var string
+     */
+    private string $secret_key;
+
+    /**
      * FileCache constructor.
      *
      * @param array $config
@@ -30,9 +35,7 @@ class FileCache implements ICache {
             mkdir($this->path, 0777, true);
         }
 
-        if (!defined('SECRET_KEY')) {
-            define('SECRET_KEY', md5('temp_cache_key'));
-        }
+        $this->secret_key = md5('temp_cache_key');
     }
 
     /**
@@ -45,22 +48,34 @@ class FileCache implements ICache {
     }
 
     /**
+     * Check if the data is cached
+     *
+     * @param string $key cache key
+     *
+     * @return bool
+     */
+    public function has(string $key): bool {
+        return $this->getFilename($key) !== false;
+    }
+
+    /**
      * Save data in cache
      *
      * @param string $key cache key
      * @param mixed  $data
      * @param int    $seconds
+     *
+     * @return void
      */
     public function set(string $key, $data, int $seconds = 0): void {
-        $key = md5($key.SECRET_KEY);
+        $file = $this->getFilename($key, false);
 
-        $cache_data = [
+        $json = json_encode([
+            'time'   => time(),
             'expire' => $seconds,
-            'data'   => serialize($data)
-        ];
+            'data'   => serialize($data),
+        ]);
 
-        $file = $this->path.$key.'.cache';
-        $json = json_encode($cache_data);
         if (@file_put_contents($file, $json, LOCK_EX) == strlen($json)) {
             @chmod($file, 0777);
         }
@@ -74,32 +89,16 @@ class FileCache implements ICache {
      * @return mixed
      */
     public function get(string $key) {
-        $key = md5($key.SECRET_KEY);
-        $file = $this->path.$key.'.cache';
+        $file = $this->getFilename($key);
 
-        if (is_file($file)) {
-            $file_data = file_get_contents($file);
-            $cache_data = json_decode($file_data, true);
+        if ($file !== false) {
+            $data = json_decode(file_get_contents($file), true);
 
-            if (!empty($cache_data['expire'])) {
-                $file_time = 0;
-
-                if (file_exists($file)) {
-                    $file_time = filemtime($file);
-                }
-
-                if (($file_time + $cache_data['expire']) < time()) {
-                    $this->delete($key);
-
-                    return null;
-                }
-            } else {
+            if ($this->isExpired($key)) {
                 $this->delete($key);
-
-                return null;
             }
 
-            return unserialize($cache_data['data']);
+            return unserialize($data['data']);
         }
 
         return null;
@@ -109,17 +108,23 @@ class FileCache implements ICache {
      * Delete data from cache
      *
      * @param string $key
+     *
+     * @return bool
      */
-    public function delete(string $key): void {
-        $key = md5($key.SECRET_KEY);
-        $file = $this->path.$key.'.cache';
-        if (file_exists($file)) {
-            @unlink($file);
+    public function delete(string $key): bool {
+        $file = $this->getFilename($key);
+
+        if ($file !== false) {
+            return @unlink($file);
         }
+
+        return false;
     }
 
     /**
      * Delete all data from cache
+     *
+     * @return void
      */
     public function flush(): void {
         $handle = opendir($this->path);
@@ -133,5 +138,52 @@ class FileCache implements ICache {
 
             closedir($handle);
         }
+    }
+
+    /**
+     * Get filename
+     *
+     * @param string $key
+     * @param bool   $check
+     *
+     * @return false|string
+     */
+    private function getFilename(string $key, bool $check = true) {
+        $key = md5($key.$this->secret_key);
+        $file = realpath($this->path).'/'.$key.'.cache';
+
+        if ($check) {
+            return is_file($file) ? $file : false;
+        }
+
+        return $file;
+    }
+
+    /**
+     * Check if item is expired or not
+     *
+     * @param string $key
+     *
+     * @return bool
+     */
+    private function isExpired(string $key): bool {
+        $file = $this->getFilename($key);
+        $data = [];
+
+        if ($file !== false) {
+            $data = json_decode(file_get_contents($file), true);
+        }
+
+        if (!isset($data['time']) && !isset($data['expire'])) {
+            return false;
+        }
+
+        $expired = false;
+
+        if ($data['expire'] !== 0) {
+            $expired = (time() - $data['time']) > $data['expire'];
+        }
+
+        return $expired;
     }
 }

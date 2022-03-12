@@ -10,14 +10,16 @@
 
 namespace RobiNN\Cache\Storage;
 
+use Exception;
+use Redis;
 use RobiNN\Cache\CacheException;
 use RobiNN\Cache\ICache;
 
 class RedisCache implements ICache {
     /**
-     * @var \Redis
+     * @var Redis
      */
-    private \Redis $redis;
+    private Redis $redis;
 
     /**
      * @var bool
@@ -32,8 +34,8 @@ class RedisCache implements ICache {
      * @throws CacheException
      */
     public function __construct(array $config) {
-        if (class_exists('\Redis')) {
-            $this->redis = new \Redis();
+        if (class_exists('Redis')) {
+            $this->redis = new Redis();
         } else {
             throw new CacheException('Failed to load Redis Class.');
         }
@@ -47,7 +49,7 @@ class RedisCache implements ICache {
 
             try {
                 $this->redis->connect($host, $port);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->connection = false;
             }
 
@@ -71,28 +73,30 @@ class RedisCache implements ICache {
     }
 
     /**
+     * Check if the data is cached
+     *
+     * @param string $key cache key
+     *
+     * @return bool
+     */
+    public function has(string $key): bool {
+        return (bool)$this->redis->exists($key);
+    }
+
+    /**
      * Save data in cache
      *
      * @param string $key cache key
      * @param mixed  $data
      * @param int    $seconds
+     *
+     * @return void
      */
     public function set(string $key, $data, int $seconds = 0): void {
-        $data = serialize($data);
-
-        if ($seconds !== 0) {
-            $time = 0;
-
-            if (!empty($this->get($key.'_time')) && !empty($this->get($key))) {
-                $time = $this->get($key.'_time');
-            }
-
-            if (($time + $seconds) < time()) {
-                $this->redis->set($key.'_time', time(), $seconds);
-                $this->redis->set($key, $data, $seconds);
-            }
+        if ($seconds > 0) {
+            $this->redis->setEx($key, $seconds, serialize($data));
         } else {
-            $this->redis->set($key, $data);
+            $this->redis->set($key, serialize($data));
         }
     }
 
@@ -111,13 +115,17 @@ class RedisCache implements ICache {
      * Delete data from cache
      *
      * @param string $key
+     *
+     * @return bool
      */
-    public function delete(string $key): void {
-        $this->redis->del($key);
+    public function delete(string $key): bool {
+        return (bool)$this->redis->del($key);
     }
 
     /**
      * Delete all data from cache
+     *
+     * @return void
      */
     public function flush(): void {
         $this->redis->flushAll();

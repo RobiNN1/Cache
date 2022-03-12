@@ -73,35 +73,30 @@ class MemcacheCache implements ICache {
     }
 
     /**
+     * Check if the data is cached
+     *
+     * @param string $key cache key
+     *
+     * @return bool
+     */
+    public function has(string $key): bool {
+        return (bool)$this->memcache->get($key);
+    }
+
+    /**
      * Save data in cache
      *
      * @param string $key cache key
      * @param mixed  $data
      * @param int    $seconds
+     *
+     * @return void
      */
     public function set(string $key, $data, int $seconds = 0): void {
-        if ($seconds !== 0) {
-            $time = 0;
-
-            if (!empty($this->get($key.'_time')) && !empty($this->get($key))) {
-                $time = $this->get($key.'_time');
-            }
-
-            if (($time + $seconds) < time()) {
-                if ($this->is_memcached) {
-                    $this->memcache->set($key.'_time', time(), $seconds);
-                    $this->memcache->set($key, $data, $seconds);
-                } else {
-                    $this->memcache->set($key.'_time', time(), 0, $seconds);
-                    $this->memcache->set($key, $data, 0, $seconds);
-                }
-            }
+        if ($this->is_memcached) {
+            $this->memcache->set($key, $data, $seconds);
         } else {
-            if ($this->is_memcached) {
-                $this->memcache->set($key, $data, $seconds);
-            } else {
-                $this->memcache->set($key, $data, 0, $seconds);
-            }
+            $this->memcache->set($key, $data, 0, $seconds);
         }
     }
 
@@ -120,13 +115,17 @@ class MemcacheCache implements ICache {
      * Delete data from cache
      *
      * @param string $key
+     *
+     * @return bool
      */
-    public function delete(string $key): void {
-        $this->memcache->delete($key);
+    public function delete(string $key): bool {
+        return $this->memcache->delete($key);
     }
 
     /**
      * Delete all data from cache
+     *
+     * @return void
      */
     public function flush(): void {
         $this->memcache->flush();
