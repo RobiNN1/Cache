@@ -11,15 +11,14 @@
 namespace RobiNN\Cache\Storage;
 
 use Exception;
-use Redis;
 use RobiNN\Cache\CacheException;
 use RobiNN\Cache\ICache;
 
 class RedisCache implements ICache {
     /**
-     * @var Redis
+     * @var \Redis
      */
-    private Redis $redis;
+    private \Redis $redis;
 
     /**
      * @var bool
@@ -27,15 +26,13 @@ class RedisCache implements ICache {
     private bool $connection = true;
 
     /**
-     * RedisCache constructor.
-     *
      * @param array $config
      *
      * @throws CacheException
      */
     public function __construct(array $config) {
-        if (class_exists('Redis')) {
-            $this->redis = new Redis();
+        if (class_exists('\Redis')) {
+            $this->redis = new \Redis();
         } else {
             throw new CacheException('Failed to load Redis Class.');
         }
@@ -75,7 +72,7 @@ class RedisCache implements ICache {
     /**
      * Check if the data is cached
      *
-     * @param string $key cache key
+     * @param string $key
      *
      * @return bool
      */
@@ -84,9 +81,9 @@ class RedisCache implements ICache {
     }
 
     /**
-     * Save data in cache
+     * Save data to cache
      *
-     * @param string $key cache key
+     * @param string $key
      * @param mixed  $data
      * @param int    $seconds
      *
@@ -101,7 +98,7 @@ class RedisCache implements ICache {
     }
 
     /**
-     * Return data by key
+     * Get data by key
      *
      * @param string $key
      *
@@ -112,7 +109,7 @@ class RedisCache implements ICache {
     }
 
     /**
-     * Delete data from cache
+     * Delete data by key
      *
      * @param string $key
      *

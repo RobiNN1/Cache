@@ -24,8 +24,6 @@ class FileCache implements ICache {
     private string $secret_key;
 
     /**
-     * FileCache constructor.
-     *
      * @param array $config
      */
     public function __construct(array $config) {
@@ -50,25 +48,25 @@ class FileCache implements ICache {
     /**
      * Check if the data is cached
      *
-     * @param string $key cache key
+     * @param string $key
      *
      * @return bool
      */
     public function has(string $key): bool {
-        return $this->getFilename($key) !== false;
+        return $this->getFileName($key) !== false;
     }
 
     /**
-     * Save data in cache
+     * Save data to cache
      *
-     * @param string $key cache key
+     * @param string $key
      * @param mixed  $data
      * @param int    $seconds
      *
      * @return void
      */
     public function set(string $key, $data, int $seconds = 0): void {
-        $file = $this->getFilename($key, false);
+        $file = $this->getFileName($key, false);
 
         $json = json_encode([
             'time'   => time(),
@@ -82,14 +80,14 @@ class FileCache implements ICache {
     }
 
     /**
-     * Return data by key
+     * Get data by key
      *
      * @param string $key
      *
      * @return mixed
      */
     public function get(string $key) {
-        $file = $this->getFilename($key);
+        $file = $this->getFileName($key);
 
         if ($file !== false) {
             $data = json_decode(file_get_contents($file), true);
@@ -105,14 +103,14 @@ class FileCache implements ICache {
     }
 
     /**
-     * Delete data from cache
+     * Delete data by key
      *
      * @param string $key
      *
      * @return bool
      */
     public function delete(string $key): bool {
-        $file = $this->getFilename($key);
+        $file = $this->getFileName($key);
 
         if ($file !== false) {
             return @unlink($file);
@@ -141,14 +139,14 @@ class FileCache implements ICache {
     }
 
     /**
-     * Get filename
+     * Get file name
      *
      * @param string $key
      * @param bool   $check
      *
      * @return false|string
      */
-    private function getFilename(string $key, bool $check = true) {
+    private function getFileName(string $key, bool $check = true) {
         $key = md5($key.$this->secret_key);
         $file = realpath($this->path).'/'.$key.'.cache';
 
@@ -167,7 +165,7 @@ class FileCache implements ICache {
      * @return bool
      */
     private function isExpired(string $key): bool {
-        $file = $this->getFilename($key);
+        $file = $this->getFileName($key);
         $data = [];
 
         if ($file !== false) {

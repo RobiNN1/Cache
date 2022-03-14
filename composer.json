@@ -1,7 +1,7 @@
 {
   "name": "robinn/cache",
   "description": "Simple cache library.",
-  "keywords": ["cache", "file", "redis", "memcached"],
+  "keywords": ["cache", "file", "memcache", "memcached", "redis"],
   "license": "MIT",
   "type": "library",
   "authors": [

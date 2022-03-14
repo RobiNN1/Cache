@@ -11,12 +11,9 @@
 namespace Tests;
 
 use Exception;
-use PHPUnit\Framework\TestCase;
 use RobiNN\Cache\Cache;
 
-final class RedisCacheTest extends TestCase {
-    private Cache $cache;
-
+final class RedisCacheTest extends CacheTest {
     protected function setUp(): void {
         try {
             $this->cache = new Cache([
@@ -27,29 +24,7 @@ final class RedisCacheTest extends TestCase {
         }
     }
 
-    public function testConnection(): void {
-        $this->assertTrue($this->cache->isConnected());
-    }
-
-    public function testSetterGetter(): void {
-        $key = 'item';
-        $data = 'itemvalue';
-
-        $this->cache->set($key, $data);
-
-        $this->assertTrue($this->cache->has($key));
-
-        $this->assertSame($data, $this->cache->get($key));
-    }
-
-    public function testDelete(): void {
-        $key = 'item2';
-        $data = 'itemvalue2';
-
-        $this->cache->set($key, $data);
-
-        $this->assertTrue($this->cache->delete($key));
-
-        $this->assertFalse($this->cache->has($key));
+    public final function testGetStorageType(): void {
+        $this->assertSame('RedisCache', $this->cache->getStorageType());
     }
 }

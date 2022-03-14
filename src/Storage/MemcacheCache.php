@@ -25,13 +25,13 @@ class MemcacheCache implements ICache {
     private bool $connection = true;
 
     /**
+     * Check if is Memcache or Memcached
+     *
      * @var bool
      */
     private bool $is_memcached = false;
 
     /**
-     * MemcacheCache constructor.
-     *
      * @param array $config
      *
      * @throws CacheException
@@ -75,7 +75,7 @@ class MemcacheCache implements ICache {
     /**
      * Check if the data is cached
      *
-     * @param string $key cache key
+     * @param string $key
      *
      * @return bool
      */
@@ -84,9 +84,9 @@ class MemcacheCache implements ICache {
     }
 
     /**
-     * Save data in cache
+     * Save data to cache
      *
-     * @param string $key cache key
+     * @param string $key
      * @param mixed  $data
      * @param int    $seconds
      *
@@ -101,7 +101,7 @@ class MemcacheCache implements ICache {
     }
 
     /**
-     * Return data by key
+     * Get data by key
      *
      * @param string $key
      *
@@ -112,7 +112,7 @@ class MemcacheCache implements ICache {
     }
 
     /**
-     * Delete data from cache
+     * Delete data by key
      *
      * @param string $key
      *

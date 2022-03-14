@@ -21,16 +21,16 @@ interface ICache {
     /**
      * Check if the data is cached
      *
-     * @param string $key cache key
+     * @param string $key
      *
      * @return bool
      */
     public function has(string $key): bool;
 
     /**
-     * Save data in cache
+     * Save data to cache
      *
-     * @param string $key cache key
+     * @param string $key
      * @param mixed  $data
      * @param int    $seconds
      *
@@ -39,7 +39,7 @@ interface ICache {
     public function set(string $key, $data, int $seconds): void;
 
     /**
-     * Return data by key
+     * Get data by key
      *
      * @param string $key
      *
@@ -48,7 +48,7 @@ interface ICache {
     public function get(string $key);
 
     /**
-     * Delete data from cache
+     * Delete data by key
      *
      * @param string $key
      *

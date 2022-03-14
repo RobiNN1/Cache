@@ -13,18 +13,18 @@ namespace Tests;
 use Exception;
 use RobiNN\Cache\Cache;
 
-final class FileCacheTest extends CacheTest {
+final class MemcacheCacheTest extends CacheTest {
     protected function setUp(): void {
         try {
             $this->cache = new Cache([
-                'storage' => 'file',
-                'path'    => __DIR__.'/cache',
+                'storage'        => 'memcache',
+                'memcache_hosts' => ['127.0.0.1:11211'],
             ]);
         } catch (Exception $e) {
         }
     }
 
     public final function testGetStorageType(): void {
-        $this->assertSame('FileCache', $this->cache->getStorageType());
+        $this->assertSame('MemcacheCache', $this->cache->getStorageType());
     }
 }

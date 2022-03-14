@@ -10,18 +10,20 @@
 
 namespace RobiNN\Cache;
 
+use RobiNN\Cache\Storage\FileCache;
+use RobiNN\Cache\Storage\MemcacheCache;
+use RobiNN\Cache\Storage\RedisCache;
+
 class Cache {
     /**
      * @const string Cache version.
      */
-    public const VERSION = '1.0.2';
+    public const VERSION = '1.0.3';
 
     /**
-     * Class name
-     *
-     * @var object
+     * @var ICache
      */
-    private object $cache;
+    private ICache $cache;
 
     /**
      * @var array
@@ -29,30 +31,30 @@ class Cache {
     private array $config;
 
     /**
-     * Cache constructor.
-     *
      * @param array $config
      *
-     * @throws CacheException
-     *
-     * @uses \RobiNN\Cache\Storage\FileCache
-     * @uses \RobiNN\Cache\Storage\RedisCache
-     * @uses \RobiNN\Cache\Storage\MemcacheCache
+     * @uses FileCache
+     * @uses MemcacheCache
+     * @uses RedisCache
      */
     public function __construct(array $config = []) {
         $this->config = $config;
+
+        $this->config['storage'] = in_array($this->config['storage'], ['file', 'memcache', 'redis']) ? $this->config['storage'] : 'file';
         $this->config['storage'] = ucfirst($this->config['storage']).'Cache';
+        $class = '\\RobiNN\\Cache\\Storage\\'.$this->config['storage'];
 
-        if (empty($this->config['storage'])) {
-            throw new CacheException('Can\'t find cache storage in config.');
-        }
+        $cache_class = new $class($this->config);
+        $this->cache = $cache_class instanceof ICache ? $cache_class : new FileCache($this->config);
+    }
 
-        if (is_file(__DIR__.'/Storage/'.$this->config['storage'].'.php')) {
-            $class = '\\RobiNN\\Cache\\Storage\\'.$this->config['storage'];
-            $this->cache = new $class($this->config);
-        } else {
-            throw new CacheException('Cache driver '.$this->config['storage'].' not found');
-        }
+    /**
+     * Get the name of the currently used storage type
+     *
+     * @return string
+     */
+    public function getStorageType(): string {
+        return $this->config['storage'];
     }
 
     /**
@@ -67,7 +69,7 @@ class Cache {
     /**
      * Check if the data is cached
      *
-     * @param string $key cache key
+     * @param string $key
      *
      * @return bool
      */
@@ -76,9 +78,9 @@ class Cache {
     }
 
     /**
-     * Save data in cache
+     * Save data to cache
      *
-     * @param string $key cache key
+     * @param string $key
      * @param mixed  $data
      * @param int    $seconds
      *
@@ -89,7 +91,7 @@ class Cache {
     }
 
     /**
-     * Return data by key
+     * Get data by key
      *
      * @param string $key
      *
@@ -100,14 +102,14 @@ class Cache {
     }
 
     /**
-     * Delete data from cache
+     * Delete data by key
      *
      * @param string $key
      *
      * @return bool
      */
     public function delete(string $key): bool {
-        return (bool)$this->cache->delete($key);
+        return $this->cache->delete($key);
     }
 
     /**

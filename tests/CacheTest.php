@@ -10,29 +10,18 @@
 
 namespace Tests;
 
-use Exception;
 use PHPUnit\Framework\TestCase;
 use RobiNN\Cache\Cache;
 
-final class MemcachedCacheTest extends TestCase {
-    private Cache $cache;
+abstract class CacheTest extends TestCase {
+    public Cache $cache;
 
-    protected function setUp(): void {
-        try {
-            $this->cache = new Cache([
-                'storage'        => 'memcache',
-                'memcache_hosts' => ['127.0.0.1:11211'],
-            ]);
-        } catch (Exception $e) {
-        }
-    }
-
-    public function testConnection(): void {
+    public final function testConnection(): void {
         $this->assertTrue($this->cache->isConnected());
     }
 
-    public function testSetterGetter(): void {
-        $key = 'item';
+    public final function testSetterGetter(): void {
+        $key = 'test-setter-getter';
         $data = 'itemvalue';
 
         $this->cache->set($key, $data);
@@ -42,8 +31,8 @@ final class MemcachedCacheTest extends TestCase {
         $this->assertSame($data, $this->cache->get($key));
     }
 
-    public function testDelete(): void {
-        $key = 'item2';
+    public final function testDelete(): void {
+        $key = 'test-delete';
         $data = 'itemvalue2';
 
         $this->cache->set($key, $data);
