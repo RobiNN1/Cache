@@ -16,7 +16,8 @@ $cache = new RobiNN\Cache\Cache([
     'storage'        => 'file', // file|memcache|redis
     'memcache_hosts' => ['localhost:11211'], // e.g. ['localhost:11211', '192.168.1.100:11211', 'unix:///var/tmp/memcached.sock']
     'redis_hosts'    => ['localhost:6379'], // e.g. ['localhost:6379', '192.168.1.100:6379:1:passwd']
-    'path'           => __DIR__.'/cache' // for FileCache
+    'path'           => __DIR__.'/cache', // for FileCache
+    'secret_key'     => 'cache_secret_key', // Any random string to secure FileCache
 ]);
 
 if ($cache->isConnected()) {

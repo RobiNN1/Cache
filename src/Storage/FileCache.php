@@ -33,7 +33,7 @@ class FileCache implements ICache {
             mkdir($this->path, 0777, true);
         }
 
-        $this->secret_key = md5('temp_cache_key');
+        $this->secret_key = md5(!empty($config['secret_key']) ? $config['secret_key'] : 'cache_secret_key');
     }
 
     /**
@@ -92,7 +92,7 @@ class FileCache implements ICache {
         if ($file !== false) {
             $data = json_decode(file_get_contents($file), true);
 
-            if ($this->isExpired($key)) {
+            if ($this->isExpired($data)) {
                 $this->delete($key);
             }
 
@@ -160,26 +160,19 @@ class FileCache implements ICache {
     /**
      * Check if item is expired or not
      *
-     * @param string $key
+     * @param array $data
      *
      * @return bool
      */
-    private function isExpired(string $key): bool {
-        $file = $this->getFileName($key);
-        $data = [];
-
-        if ($file !== false) {
-            $data = json_decode(file_get_contents($file), true);
-        }
-
+    private function isExpired(array $data): bool {
         if (!isset($data['time']) && !isset($data['expire'])) {
             return false;
         }
 
         $expired = false;
 
-        if ($data['expire'] !== 0) {
-            $expired = (time() - $data['time']) > $data['expire'];
+        if ((int)$data['expire'] !== 0) {
+            $expired = (time() - (int)$data['time']) > (int)$data['expire'];
         }
 
         return $expired;

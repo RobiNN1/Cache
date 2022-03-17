@@ -18,7 +18,7 @@ class Cache {
     /**
      * @const string Cache version.
      */
-    public const VERSION = '1.0.3';
+    public const VERSION = '1.0.4';
 
     /**
      * @var ICache
