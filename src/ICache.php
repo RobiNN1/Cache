@@ -36,7 +36,7 @@ interface ICache {
      *
      * @return void
      */
-    public function set(string $key, $data, int $seconds): void;
+    public function set(string $key, mixed $data, int $seconds): void;
 
     /**
      * Get data by key
@@ -45,7 +45,7 @@ interface ICache {
      *
      * @return mixed
      */
-    public function get(string $key);
+    public function get(string $key): mixed;
 
     /**
      * Delete data by key

@@ -65,7 +65,7 @@ class FileCache implements ICache {
      *
      * @return void
      */
-    public function set(string $key, $data, int $seconds = 0): void {
+    public function set(string $key, mixed $data, int $seconds): void {
         $file = $this->getFileName($key, false);
 
         $json = json_encode([
@@ -86,7 +86,7 @@ class FileCache implements ICache {
      *
      * @return mixed
      */
-    public function get(string $key) {
+    public function get(string $key): mixed {
         $file = $this->getFileName($key);
 
         if ($file !== false) {
@@ -144,9 +144,9 @@ class FileCache implements ICache {
      * @param string $key
      * @param bool   $check
      *
-     * @return false|string
+     * @return bool|string
      */
-    private function getFileName(string $key, bool $check = true) {
+    private function getFileName(string $key, bool $check = true): bool|string {
         $key = md5($key.$this->secret_key);
         $file = realpath($this->path).'/'.$key.'.cache';
 

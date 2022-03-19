@@ -86,7 +86,7 @@ class Cache {
      *
      * @return void
      */
-    public function set(string $key, $data, int $seconds = 0): void {
+    public function set(string $key, mixed $data, int $seconds = 0): void {
         $this->cache->set($key, $data, $seconds);
     }
 
@@ -97,7 +97,7 @@ class Cache {
      *
      * @return mixed
      */
-    public function get(string $key) {
+    public function get(string $key): mixed {
         return $this->cache->get($key);
     }
 

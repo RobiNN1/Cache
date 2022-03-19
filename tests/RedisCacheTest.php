@@ -10,18 +10,14 @@
 
 namespace Tests;
 
-use Exception;
 use RobiNN\Cache\Cache;
 
 final class RedisCacheTest extends CacheTest {
     protected function setUp(): void {
-        try {
-            $this->cache = new Cache([
-                'storage'     => 'redis',
-                'redis_hosts' => ['127.0.0.1:6379'],
-            ]);
-        } catch (Exception $e) {
-        }
+        $this->cache = new Cache([
+            'storage'     => 'redis',
+            'redis_hosts' => ['127.0.0.1:6379'],
+        ]);
     }
 
     public final function testGetStorageType(): void {

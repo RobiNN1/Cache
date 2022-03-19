@@ -47,7 +47,7 @@ class MemcacheCache implements ICache {
         }
 
         foreach ($config['memcache_hosts'] as $host) {
-            if (substr($host, 0, 7) != 'unix://') {
+            if (!str_starts_with($host, 'unix://')) {
                 [$host, $port] = explode(':', $host);
                 if (!$port) {
                     $port = 11211;
@@ -92,7 +92,7 @@ class MemcacheCache implements ICache {
      *
      * @return void
      */
-    public function set(string $key, $data, int $seconds = 0): void {
+    public function set(string $key, mixed $data, int $seconds): void {
         if ($this->is_memcached) {
             $this->memcache->set($key, $data, $seconds);
         } else {
@@ -107,7 +107,7 @@ class MemcacheCache implements ICache {
      *
      * @return mixed
      */
-    public function get(string $key) {
+    public function get(string $key): mixed {
         return $this->memcache->get($key);
     }
 
