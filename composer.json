@@ -1,7 +1,13 @@
 {
   "name": "robinn/cache",
   "description": "Simple cache library.",
-  "keywords": ["cache", "file", "memcache", "memcached", "redis"],
+  "keywords": [
+    "cache",
+    "file",
+    "memcache",
+    "memcached",
+    "redis"
+  ],
   "license": "MIT",
   "type": "library",
   "authors": [
@@ -18,7 +24,7 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": ">=8.0",
+    "php": ">=8.1",
     "ext-json": "*"
   },
   "suggest": {

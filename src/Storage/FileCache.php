@@ -16,12 +16,12 @@ class FileCache implements ICache {
     /**
      * @var string
      */
-    private string $path;
+    private readonly string $path;
 
     /**
      * @var string
      */
-    private string $secret_key;
+    private readonly string $secret_key;
 
     /**
      * @param array $config
@@ -65,7 +65,7 @@ class FileCache implements ICache {
      *
      * @return void
      */
-    public function set(string $key, mixed $data, int $seconds): void {
+    public function set(string $key, mixed $data, int $seconds = 0): void {
         $file = $this->getFileName($key, false);
 
         $json = json_encode([
@@ -74,7 +74,7 @@ class FileCache implements ICache {
             'data'   => serialize($data),
         ]);
 
-        if (@file_put_contents($file, $json, LOCK_EX) == strlen($json)) {
+        if (@file_put_contents($file, $json, LOCK_EX) == strlen((string)$json)) {
             @chmod($file, 0777);
         }
     }

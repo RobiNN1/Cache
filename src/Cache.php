@@ -11,35 +11,26 @@
 namespace RobiNN\Cache;
 
 use RobiNN\Cache\Storage\FileCache;
-use RobiNN\Cache\Storage\MemcacheCache;
-use RobiNN\Cache\Storage\RedisCache;
 
 class Cache {
     /**
-     * @const string Cache version.
+     * @const string Cache version
      */
-    public const VERSION = '1.0.5';
+    public final const VERSION = '1.0.6';
 
     /**
      * @var ICache
      */
-    private ICache $cache;
-
-    /**
-     * @var array
-     */
-    private array $config;
+    private readonly ICache $cache;
 
     /**
      * @param array $config
      *
-     * @uses FileCache
-     * @uses MemcacheCache
-     * @uses RedisCache
+     * @uses \RobiNN\Cache\Storage\FileCache
+     * @uses \RobiNN\Cache\Storage\MemcacheCache
+     * @uses \RobiNN\Cache\Storage\RedisCache
      */
-    public function __construct(array $config = []) {
-        $this->config = $config;
-
+    public function __construct(private array $config = []) {
         $this->config['storage'] = in_array($this->config['storage'], ['file', 'memcache', 'redis']) ? $this->config['storage'] : 'file';
         $this->config['storage'] = ucfirst($this->config['storage']).'Cache';
         $class = '\\RobiNN\\Cache\\Storage\\'.$this->config['storage'];

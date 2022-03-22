@@ -16,9 +16,9 @@ use RobiNN\Cache\ICache;
 
 class RedisCache implements ICache {
     /**
-     * @var \Redis
+     * @var object
      */
-    private \Redis $redis;
+    private object $redis;
 
     /**
      * @var bool
@@ -89,7 +89,7 @@ class RedisCache implements ICache {
      *
      * @return void
      */
-    public function set(string $key, mixed $data, int $seconds): void {
+    public function set(string $key, mixed $data, int $seconds = 0): void {
         if ($seconds > 0) {
             $this->redis->setEx($key, $seconds, serialize($data));
         } else {

@@ -36,7 +36,7 @@ interface ICache {
      *
      * @return void
      */
-    public function set(string $key, mixed $data, int $seconds): void;
+    public function set(string $key, mixed $data, int $seconds = 0): void;
 
     /**
      * Get data by key

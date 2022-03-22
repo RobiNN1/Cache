@@ -15,9 +15,9 @@ use RobiNN\Cache\ICache;
 
 class MemcacheCache implements ICache {
     /**
-     * @var \Memcache|\Memcached
+     * @var object
      */
-    private $memcache;
+    private object $memcache;
 
     /**
      * @var bool
@@ -48,7 +48,7 @@ class MemcacheCache implements ICache {
 
         foreach ($config['memcache_hosts'] as $host) {
             if (!str_starts_with($host, 'unix://')) {
-                [$host, $port] = explode(':', $host);
+                [$host, $port] = explode(':', (string)$host);
                 if (!$port) {
                     $port = 11211;
                 }
@@ -92,7 +92,7 @@ class MemcacheCache implements ICache {
      *
      * @return void
      */
-    public function set(string $key, mixed $data, int $seconds): void {
+    public function set(string $key, mixed $data, int $seconds = 0): void {
         if ($this->is_memcached) {
             $this->memcache->set($key, $data, $seconds);
         } else {
