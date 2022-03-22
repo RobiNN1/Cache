@@ -19,8 +19,4 @@ final class RedisCacheTest extends CacheTest {
             'redis_hosts' => ['127.0.0.1:6379'],
         ]);
     }
-
-    public final function testGetStorageType(): void {
-        $this->assertSame('RedisCache', $this->cache->getStorageType());
-    }
 }

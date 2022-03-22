@@ -19,8 +19,4 @@ final class FileCacheTest extends CacheTest {
             'path'    => __DIR__.'/cache',
         ]);
     }
-
-    public final function testGetStorageType(): void {
-        $this->assertSame('FileCache', $this->cache->getStorageType());
-    }
 }

@@ -19,8 +19,4 @@ final class MemcacheCacheTest extends CacheTest {
             'memcache_hosts' => ['127.0.0.1:11211'],
         ]);
     }
-
-    public final function testGetStorageType(): void {
-        $this->assertSame('MemcacheCache', $this->cache->getStorageType());
-    }
 }
