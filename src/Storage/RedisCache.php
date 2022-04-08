@@ -43,7 +43,7 @@ class RedisCache implements ICache {
             [$host, $port, $database, $password] = array_pad(explode(':', $host, 4), 4, null);
 
             $host = ($host !== null) ? $host : '127.0.0.1';
-            $port = ($port !== null) ? $port : 6379;
+            $port = ($port !== null) ? (int)$port : 6379;
             $database = ($database !== null) ? $database : 0;
 
             try {
