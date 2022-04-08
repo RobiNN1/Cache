@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace RobiNN\Cache;
 
 use RobiNN\Cache\Storage\FileCache;
@@ -16,7 +18,7 @@ class Cache {
     /**
      * @const string Cache version
      */
-    public final const VERSION = '1.0.6';
+    public final const VERSION = '1.0.7';
 
     /**
      * @var ICache
