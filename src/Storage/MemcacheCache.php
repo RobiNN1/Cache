@@ -58,7 +58,7 @@ class MemcacheCache implements ICache {
                 $port = 0;
             }
 
-            $this->memcache->addServer($host, $port);
+            $this->memcache->addServer($host, (int)$port);
 
             $stats = @$this->memcache->getStats();
             $this->connection = !empty($stats) && (!empty($stats['pid']) && $stats['pid'] > 0);
