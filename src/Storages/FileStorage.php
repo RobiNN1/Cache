@@ -10,11 +10,11 @@
 
 declare(strict_types=1);
 
-namespace RobiNN\Cache\Storage;
+namespace RobiNN\Cache\Storages;
 
-use RobiNN\Cache\ICache;
+use RobiNN\Cache\CacheInterface;
 
-class FileCache implements ICache {
+class FileStorage implements CacheInterface {
     /**
      * @var string
      */

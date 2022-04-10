@@ -10,16 +10,17 @@
 
 declare(strict_types=1);
 
-namespace RobiNN\Cache\Storage;
+namespace RobiNN\Cache\Storages;
 
+use Exception;
 use RobiNN\Cache\CacheException;
-use RobiNN\Cache\ICache;
+use RobiNN\Cache\CacheInterface;
 
-class MemcacheCache implements ICache {
+class RedisStorage implements CacheInterface {
     /**
      * @var object
      */
-    private object $memcache;
+    private object $redis;
 
     /**
      * @var bool
@@ -27,41 +28,37 @@ class MemcacheCache implements ICache {
     private bool $connection = true;
 
     /**
-     * Check if is Memcache or Memcached
-     *
-     * @var bool
-     */
-    private bool $is_memcached = false;
-
-    /**
      * @param array $config
      *
      * @throws CacheException
      */
     public function __construct(array $config) {
-        if (class_exists('\Memcached')) {
-            $this->memcache = new \Memcached();
-            $this->is_memcached = true;
-        } else if (class_exists('\Memcache')) {
-            $this->memcache = new \Memcache();
+        if (class_exists('\Redis')) {
+            $this->redis = new \Redis();
         } else {
-            throw new CacheException('Failed to load Memcached or Memcache Class.');
+            throw new CacheException('Failed to load Redis Class.');
         }
 
-        foreach ($config['memcache_hosts'] as $host) {
-            if (!str_starts_with($host, 'unix://')) {
-                [$host, $port] = explode(':', (string)$host);
-                if (!$port) {
-                    $port = 11211;
-                }
-            } else {
-                $port = 0;
+        foreach ($config['redis_hosts'] as $host) {
+            [$host, $port, $database, $password] = array_pad(explode(':', $host, 4), 4, null);
+
+            $host = ($host !== null) ? $host : '127.0.0.1';
+            $port = ($port !== null) ? (int)$port : 6379;
+            $database = ($database !== null) ? $database : 0;
+
+            try {
+                $this->redis->connect($host, $port);
+            } catch (Exception) {
+                $this->connection = false;
             }
 
-            $this->memcache->addServer($host, (int)$port);
+            if ($password != null && $this->redis->auth($password) === false) {
+                throw new CacheException('Could not authenticate with Redis server. Please check password.');
+            }
 
-            $stats = @$this->memcache->getStats();
-            $this->connection = !empty($stats) && (!empty($stats['pid']) && $stats['pid'] > 0);
+            if ($database != 0 && $this->redis->select($database) === false) {
+                throw new CacheException('Could not select Redis database. Please check database setting.');
+            }
         }
     }
 
@@ -82,7 +79,7 @@ class MemcacheCache implements ICache {
      * @return bool
      */
     public function has(string $key): bool {
-        return (bool)$this->memcache->get($key);
+        return (bool)$this->redis->exists($key);
     }
 
     /**
@@ -95,10 +92,10 @@ class MemcacheCache implements ICache {
      * @return void
      */
     public function set(string $key, mixed $data, int $seconds = 0): void {
-        if ($this->is_memcached) {
-            $this->memcache->set($key, $data, $seconds);
+        if ($seconds > 0) {
+            $this->redis->setEx($key, $seconds, serialize($data));
         } else {
-            $this->memcache->set($key, $data, 0, $seconds);
+            $this->redis->set($key, serialize($data));
         }
     }
 
@@ -110,7 +107,7 @@ class MemcacheCache implements ICache {
      * @return mixed
      */
     public function get(string $key): mixed {
-        return $this->memcache->get($key);
+        return unserialize($this->redis->get($key));
     }
 
     /**
@@ -121,7 +118,7 @@ class MemcacheCache implements ICache {
      * @return bool
      */
     public function delete(string $key): bool {
-        return $this->memcache->delete($key);
+        return (bool)$this->redis->del($key);
     }
 
     /**
@@ -130,6 +127,6 @@ class MemcacheCache implements ICache {
      * @return void
      */
     public function flush(): void {
-        $this->memcache->flush();
+        $this->redis->flushAll();
     }
 }

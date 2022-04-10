@@ -12,33 +12,32 @@ declare(strict_types=1);
 
 namespace RobiNN\Cache;
 
-use RobiNN\Cache\Storage\FileCache;
+use RobiNN\Cache\Storages\FileStorage;
 
 class Cache {
     /**
      * @const string Cache version
      */
-    public final const VERSION = '1.0.7';
+    public final const VERSION = '1.0.8';
 
     /**
-     * @var ICache
+     * @var CacheInterface
      */
-    private readonly ICache $cache;
+    private readonly CacheInterface $cache;
 
     /**
      * @param array $config
      *
-     * @uses \RobiNN\Cache\Storage\FileCache
-     * @uses \RobiNN\Cache\Storage\MemcacheCache
-     * @uses \RobiNN\Cache\Storage\RedisCache
+     * @uses \RobiNN\Cache\Storages\FileStorage
+     * @uses \RobiNN\Cache\Storages\MemcacheStorage
+     * @uses \RobiNN\Cache\Storages\RedisStorage
      */
     public function __construct(private array $config = []) {
-        $this->config['storage'] = in_array($this->config['storage'], ['file', 'memcache', 'redis']) ? $this->config['storage'] : 'file';
-        $this->config['storage'] = ucfirst($this->config['storage']).'Cache';
-        $class = '\\RobiNN\\Cache\\Storage\\'.$this->config['storage'];
+        $storage = in_array($this->config['storage'], ['file', 'memcache', 'redis']) ? $this->config['storage'] : 'file';
+        $this->config['storage'] = ucfirst($storage).'Storage';
 
-        $cache_class = new $class($this->config);
-        $this->cache = $cache_class instanceof ICache ? $cache_class : new FileCache($this->config);
+        $cache_class = new ('\\RobiNN\\Cache\\Storages\\'.$this->config['storage'])($this->config);
+        $this->cache = $cache_class instanceof CacheInterface ? $cache_class : new FileStorage($this->config);
     }
 
     /**
