@@ -14,14 +14,14 @@ namespace RobiNN\Cache;
 
 interface CacheInterface {
     /**
-     * Check connection
+     * Check connection.
      *
      * @return bool
      */
     public function isConnected(): bool;
 
     /**
-     * Check if the data is cached
+     * Check if the data is cached.
      *
      * @param string $key
      *
@@ -30,7 +30,7 @@ interface CacheInterface {
     public function has(string $key): bool;
 
     /**
-     * Save data to cache
+     * Save data to cache.
      *
      * @param string $key
      * @param mixed  $data
@@ -41,7 +41,7 @@ interface CacheInterface {
     public function set(string $key, mixed $data, int $seconds = 0): void;
 
     /**
-     * Get data by key
+     * Get data by key.
      *
      * @param string $key
      *
@@ -50,7 +50,7 @@ interface CacheInterface {
     public function get(string $key): mixed;
 
     /**
-     * Delete data by key
+     * Delete data by key.
      *
      * @param string $key
      *
@@ -59,7 +59,7 @@ interface CacheInterface {
     public function delete(string $key): bool;
 
     /**
-     * Delete all data from cache
+     * Delete all data from cache.
      *
      * @return void
      */

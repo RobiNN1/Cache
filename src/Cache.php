@@ -41,7 +41,7 @@ class Cache {
     }
 
     /**
-     * Get the name of the currently used storage type
+     * Get the name of the currently used storage type.
      *
      * @return string
      */
@@ -50,7 +50,7 @@ class Cache {
     }
 
     /**
-     * Check connection
+     * Check connection.
      *
      * @return bool
      */
@@ -59,7 +59,7 @@ class Cache {
     }
 
     /**
-     * Check if the data is cached
+     * Check if the data is cached.
      *
      * @param string $key
      *
@@ -70,7 +70,7 @@ class Cache {
     }
 
     /**
-     * Save data to cache
+     * Save data to cache.
      *
      * @param string $key
      * @param mixed  $data
@@ -83,7 +83,7 @@ class Cache {
     }
 
     /**
-     * Get data by key
+     * Get data by key.
      *
      * @param string $key
      *
@@ -94,7 +94,7 @@ class Cache {
     }
 
     /**
-     * Delete data by key
+     * Delete data by key.
      *
      * @param string $key
      *
@@ -105,7 +105,7 @@ class Cache {
     }
 
     /**
-     * Delete all data from cache
+     * Delete all data from cache.
      *
      * @return void
      */

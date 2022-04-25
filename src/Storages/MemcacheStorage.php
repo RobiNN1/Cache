@@ -27,7 +27,7 @@ class MemcacheStorage implements CacheInterface {
     private bool $connection = true;
 
     /**
-     * Check if is Memcache or Memcached
+     * Check if is Memcache or Memcached.
      *
      * @var bool
      */
@@ -66,7 +66,7 @@ class MemcacheStorage implements CacheInterface {
     }
 
     /**
-     * Check connection
+     * Check connection.
      *
      * @return bool
      */
@@ -75,7 +75,7 @@ class MemcacheStorage implements CacheInterface {
     }
 
     /**
-     * Check if the data is cached
+     * Check if the data is cached.
      *
      * @param string $key
      *
@@ -86,7 +86,7 @@ class MemcacheStorage implements CacheInterface {
     }
 
     /**
-     * Save data to cache
+     * Save data to cache.
      *
      * @param string $key
      * @param mixed  $data
@@ -103,7 +103,7 @@ class MemcacheStorage implements CacheInterface {
     }
 
     /**
-     * Get data by key
+     * Get data by key.
      *
      * @param string $key
      *
@@ -114,7 +114,7 @@ class MemcacheStorage implements CacheInterface {
     }
 
     /**
-     * Delete data by key
+     * Delete data by key.
      *
      * @param string $key
      *
@@ -125,7 +125,7 @@ class MemcacheStorage implements CacheInterface {
     }
 
     /**
-     * Delete all data from cache
+     * Delete all data from cache.
      *
      * @return void
      */

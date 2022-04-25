@@ -39,7 +39,7 @@ class FileStorage implements CacheInterface {
     }
 
     /**
-     * Check connection
+     * Check connection.
      *
      * @return bool
      */
@@ -48,7 +48,7 @@ class FileStorage implements CacheInterface {
     }
 
     /**
-     * Check if the data is cached
+     * Check if the data is cached.
      *
      * @param string $key
      *
@@ -59,7 +59,7 @@ class FileStorage implements CacheInterface {
     }
 
     /**
-     * Save data to cache
+     * Save data to cache.
      *
      * @param string $key
      * @param mixed  $data
@@ -82,7 +82,7 @@ class FileStorage implements CacheInterface {
     }
 
     /**
-     * Get data by key
+     * Get data by key.
      *
      * @param string $key
      *
@@ -105,7 +105,7 @@ class FileStorage implements CacheInterface {
     }
 
     /**
-     * Delete data by key
+     * Delete data by key.
      *
      * @param string $key
      *
@@ -122,7 +122,7 @@ class FileStorage implements CacheInterface {
     }
 
     /**
-     * Delete all data from cache
+     * Delete all data from cache.
      *
      * @return void
      */
@@ -141,7 +141,7 @@ class FileStorage implements CacheInterface {
     }
 
     /**
-     * Get file name
+     * Get file name.
      *
      * @param string $key
      * @param bool   $check
@@ -160,7 +160,7 @@ class FileStorage implements CacheInterface {
     }
 
     /**
-     * Check if item is expired or not
+     * Check if item is expired or not.
      *
      * @param array $data
      *
