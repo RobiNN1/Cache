@@ -18,11 +18,11 @@ use RobiNN\Cache\Cache;
 abstract class CacheTest extends TestCase {
     public Cache $cache;
 
-    public final function testConnection(): void {
+    public function testConnection(): void {
         $this->assertTrue($this->cache->isConnected());
     }
 
-    public final function testSetterGetter(): void {
+    public function testSetterGetter(): void {
         $key = 'test-setter-getter';
         $data = 'itemvalue';
 
@@ -33,7 +33,7 @@ abstract class CacheTest extends TestCase {
         $this->assertSame($data, $this->cache->get($key));
     }
 
-    public final function testDelete(): void {
+    public function testDelete(): void {
         $key = 'test-delete';
         $data = 'itemvalue2';
 
