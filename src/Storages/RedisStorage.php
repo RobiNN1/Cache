@@ -42,9 +42,9 @@ class RedisStorage implements CacheInterface {
         foreach ($config['redis_hosts'] as $host) {
             [$host, $port, $database, $password] = array_pad(explode(':', $host, 4), 4, null);
 
-            $host = ($host !== null) ? $host : '127.0.0.1';
+            $host = $host ?? '127.0.0.1';
             $port = ($port !== null) ? (int)$port : 6379;
-            $database = ($database !== null) ? $database : 0;
+            $database = $database ?? 0;
 
             try {
                 $this->redis->connect($host, $port);
@@ -52,18 +52,18 @@ class RedisStorage implements CacheInterface {
                 $this->connection = false;
             }
 
-            if ($password != null && $this->redis->auth($password) === false) {
+            if ($password !== null && $this->redis->auth($password) === false) {
                 throw new CacheException('Could not authenticate with Redis server. Please check password.');
             }
 
-            if ($database != 0 && $this->redis->select($database) === false) {
+            if ($database !== 0 && $this->redis->select($database) === false) {
                 throw new CacheException('Could not select Redis database. Please check database setting.');
             }
         }
     }
 
     /**
-     * Check connection
+     * Check connection.
      *
      * @return bool
      */
@@ -72,7 +72,7 @@ class RedisStorage implements CacheInterface {
     }
 
     /**
-     * Check if the data is cached
+     * Check if the data is cached.
      *
      * @param string $key
      *
@@ -83,7 +83,7 @@ class RedisStorage implements CacheInterface {
     }
 
     /**
-     * Save data to cache
+     * Save data to cache.
      *
      * @param string $key
      * @param mixed  $data
@@ -100,18 +100,18 @@ class RedisStorage implements CacheInterface {
     }
 
     /**
-     * Get data by key
+     * Get data by key.
      *
      * @param string $key
      *
      * @return mixed
      */
     public function get(string $key): mixed {
-        return unserialize($this->redis->get($key));
+        return unserialize($this->redis->get($key), ['allowed_classes' => false]);
     }
 
     /**
-     * Delete data by key
+     * Delete data by key.
      *
      * @param string $key
      *
@@ -122,7 +122,7 @@ class RedisStorage implements CacheInterface {
     }
 
     /**
-     * Delete all data from cache
+     * Delete all data from cache.
      *
      * @return void
      */

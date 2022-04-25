@@ -39,7 +39,7 @@ class FileStorage implements CacheInterface {
     }
 
     /**
-     * Check connection
+     * Check connection.
      *
      * @return bool
      */
@@ -48,7 +48,7 @@ class FileStorage implements CacheInterface {
     }
 
     /**
-     * Check if the data is cached
+     * Check if the data is cached.
      *
      * @param string $key
      *
@@ -59,7 +59,7 @@ class FileStorage implements CacheInterface {
     }
 
     /**
-     * Save data to cache
+     * Save data to cache.
      *
      * @param string $key
      * @param mixed  $data
@@ -76,13 +76,13 @@ class FileStorage implements CacheInterface {
             'data'   => serialize($data),
         ]);
 
-        if (@file_put_contents($file, $json, LOCK_EX) == strlen((string)$json)) {
+        if (@file_put_contents($file, $json, LOCK_EX) === strlen((string)$json)) {
             @chmod($file, 0777);
         }
     }
 
     /**
-     * Get data by key
+     * Get data by key.
      *
      * @param string $key
      *
@@ -98,14 +98,14 @@ class FileStorage implements CacheInterface {
                 $this->delete($key);
             }
 
-            return unserialize($data['data']);
+            return unserialize($data['data'], ['allowed_classes' => false]);
         }
 
         return null;
     }
 
     /**
-     * Delete data by key
+     * Delete data by key.
      *
      * @param string $key
      *
@@ -122,7 +122,7 @@ class FileStorage implements CacheInterface {
     }
 
     /**
-     * Delete all data from cache
+     * Delete all data from cache.
      *
      * @return void
      */
@@ -131,7 +131,7 @@ class FileStorage implements CacheInterface {
 
         if ($handle) {
             while (false !== ($file = readdir($handle))) {
-                if ($file != '.' && $file != '..') {
+                if ($file !== '.' && $file !== '..') {
                     @unlink($this->path.$file);
                 }
             }
@@ -141,7 +141,7 @@ class FileStorage implements CacheInterface {
     }
 
     /**
-     * Get file name
+     * Get file name.
      *
      * @param string $key
      * @param bool   $check
@@ -160,7 +160,7 @@ class FileStorage implements CacheInterface {
     }
 
     /**
-     * Check if item is expired or not
+     * Check if the item is expired or not.
      *
      * @param array $data
      *
