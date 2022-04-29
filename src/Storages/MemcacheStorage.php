@@ -42,7 +42,7 @@ class MemcacheStorage implements CacheInterface {
         if (class_exists('\Memcached')) {
             $this->memcache = new \Memcached();
             $this->is_memcached = true;
-        } else if (class_exists('\Memcache')) {
+        } elseif (class_exists('\Memcache')) {
             $this->memcache = new \Memcache();
         } else {
             throw new CacheException('Failed to load Memcached or Memcache Class.');
@@ -50,7 +50,7 @@ class MemcacheStorage implements CacheInterface {
 
         foreach ($config['memcache_hosts'] as $host) {
             if (!str_starts_with($host, 'unix://')) {
-                [$host, $port] = explode(':', (string)$host);
+                [$host, $port] = explode(':', (string) $host);
                 if (!$port) {
                     $port = 11211;
                 }
@@ -58,7 +58,7 @@ class MemcacheStorage implements CacheInterface {
                 $port = 0;
             }
 
-            $this->memcache->addServer($host, (int)$port);
+            $this->memcache->addServer($host, (int) $port);
 
             $stats = @$this->memcache->getStats();
             $this->connection = !empty($stats) && (!empty($stats['pid']) && $stats['pid'] > 0);
@@ -82,7 +82,7 @@ class MemcacheStorage implements CacheInterface {
      * @return bool
      */
     public function has(string $key): bool {
-        return (bool)$this->memcache->get($key);
+        return (bool) $this->memcache->get($key);
     }
 
     /**

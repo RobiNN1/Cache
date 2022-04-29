@@ -43,7 +43,7 @@ class RedisStorage implements CacheInterface {
             [$host, $port, $database, $password] = array_pad(explode(':', $host, 4), 4, null);
 
             $host = $host ?? '127.0.0.1';
-            $port = ($port !== null) ? (int)$port : 6379;
+            $port = ($port !== null) ? (int) $port : 6379;
             $database = $database ?? 0;
 
             try {
@@ -79,7 +79,7 @@ class RedisStorage implements CacheInterface {
      * @return bool
      */
     public function has(string $key): bool {
-        return (bool)$this->redis->exists($key);
+        return (bool) $this->redis->exists($key);
     }
 
     /**
@@ -118,7 +118,7 @@ class RedisStorage implements CacheInterface {
      * @return bool
      */
     public function delete(string $key): bool {
-        return (bool)$this->redis->del($key);
+        return (bool) $this->redis->del($key);
     }
 
     /**

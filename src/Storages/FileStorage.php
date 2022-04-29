@@ -76,7 +76,7 @@ class FileStorage implements CacheInterface {
             'data'   => serialize($data),
         ]);
 
-        if (@file_put_contents($file, $json, LOCK_EX) === strlen((string)$json)) {
+        if (@file_put_contents($file, $json, LOCK_EX) === strlen((string) $json)) {
             @chmod($file, 0777);
         }
     }
@@ -173,8 +173,8 @@ class FileStorage implements CacheInterface {
 
         $expired = false;
 
-        if ((int)$data['expire'] !== 0) {
-            $expired = (time() - (int)$data['time']) > (int)$data['expire'];
+        if ((int) $data['expire'] !== 0) {
+            $expired = (time() - (int) $data['time']) > (int) $data['expire'];
         }
 
         return $expired;
