@@ -33,7 +33,7 @@
     "ext-redis": "Required to use the redis cache driver."
   },
   "require-dev": {
-    "phpstan/phpstan": "^1.5",
+    "phpstan/phpstan": "^1.6",
     "phpunit/phpunit": "^9.5"
   },
   "autoload": {
