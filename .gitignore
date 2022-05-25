@@ -1,5 +1,5 @@
 .idea
 vendor
-/.phpunit.result.cache
+.phpunit.result.cache
 composer.lock
 tests/cache
