@@ -38,7 +38,7 @@ interface CacheInterface {
      *
      * @return void
      */
-    public function set(string $key, mixed $data, int $seconds = 0): void;
+    public function set(string $key, $data, int $seconds = 0): void;
 
     /**
      * Get data by key.
@@ -47,7 +47,7 @@ interface CacheInterface {
      *
      * @return mixed
      */
-    public function get(string $key): mixed;
+    public function get(string $key);
 
     /**
      * Delete data by key.

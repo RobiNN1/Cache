@@ -48,7 +48,7 @@ class RedisStorage implements CacheInterface {
 
             try {
                 $this->redis->connect($host, $port);
-            } catch (Exception) {
+            } catch (Exception $e) {
                 $this->connection = false;
             }
 
@@ -91,7 +91,7 @@ class RedisStorage implements CacheInterface {
      *
      * @return void
      */
-    public function set(string $key, mixed $data, int $seconds = 0): void {
+    public function set(string $key, $data, int $seconds = 0): void {
         if ($seconds > 0) {
             $this->redis->setEx($key, $seconds, serialize($data));
         } else {
@@ -106,7 +106,7 @@ class RedisStorage implements CacheInterface {
      *
      * @return mixed
      */
-    public function get(string $key): mixed {
+    public function get(string $key) {
         return unserialize($this->redis->get($key), ['allowed_classes' => false]);
     }
 
