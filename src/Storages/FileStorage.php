@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace RobiNN\Cache\Storages;
 
+use RobiNN\Cache\CacheException;
 use RobiNN\Cache\CacheInterface;
 
 class FileStorage implements CacheInterface {
@@ -27,12 +28,14 @@ class FileStorage implements CacheInterface {
 
     /**
      * @param array $config
+     *
+     * @throws CacheException
      */
     public function __construct(array $config) {
         $this->path = $config['path'];
 
-        if (!is_dir($this->path)) {
-            mkdir($this->path, 0777, true);
+        if (!is_dir($this->path) && false === @mkdir($this->path, 0777, true) && !is_dir($this->path)) {
+            throw new CacheException(sprintf('Unable to create the "%s" directory.', $this->path));
         }
 
         $this->secret_key = md5(!empty($config['secret_key']) ? $config['secret_key'] : 'cache_secret_key');

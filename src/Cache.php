@@ -18,7 +18,7 @@ class Cache {
     /**
      * @const string Cache version
      */
-    public final const VERSION = '1.0.10';
+    public final const VERSION = '2.0.0';
 
     /**
      * @var CacheInterface
@@ -28,9 +28,9 @@ class Cache {
     /**
      * @param array $config
      *
-     * @uses \RobiNN\Cache\Storages\FileStorage
      * @uses \RobiNN\Cache\Storages\MemcacheStorage
      * @uses \RobiNN\Cache\Storages\RedisStorage
+     * @uses \RobiNN\Cache\Storages\FileStorage
      */
     public function __construct(private array $config = []) {
         $storage = in_array($this->config['storage'], ['file', 'memcache', 'redis']) ? $this->config['storage'] : 'file';
