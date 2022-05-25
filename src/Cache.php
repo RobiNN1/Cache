@@ -42,7 +42,8 @@ class Cache {
         $storage = in_array($this->config['storage'], ['file', 'memcache', 'redis']) ? $this->config['storage'] : 'file';
         $this->config['storage'] = ucfirst($storage).'Storage';
 
-        $cache_class = new ('\\RobiNN\\Cache\\Storages\\'.$this->config['storage'])($this->config);
+        $class = '\\RobiNN\\Cache\\Storages\\'.$this->config['storage'];
+        $cache_class = new $class($this->config);
         $this->cache = $cache_class instanceof CacheInterface ? $cache_class : new FileStorage($this->config);
     }
 
