@@ -94,7 +94,7 @@ class MemcacheStorage implements CacheInterface {
      *
      * @return void
      */
-    public function set(string $key, $data, int $seconds = 0): void {
+    public function set(string $key, mixed $data, int $seconds = 0): void {
         if ($this->is_memcached) {
             $this->memcache->set($key, $data, $seconds);
         } else {
@@ -109,7 +109,7 @@ class MemcacheStorage implements CacheInterface {
      *
      * @return mixed
      */
-    public function get(string $key) {
+    public function get(string $key): mixed {
         return $this->memcache->get($key);
     }
 

@@ -19,12 +19,12 @@ class FileStorage implements CacheInterface {
     /**
      * @var string
      */
-    private string $path;
+    private readonly string $path;
 
     /**
      * @var string
      */
-    private string $secret_key;
+    private readonly string $secret_key;
 
     /**
      * @param array $config
@@ -70,7 +70,7 @@ class FileStorage implements CacheInterface {
      *
      * @return void
      */
-    public function set(string $key, $data, int $seconds = 0): void {
+    public function set(string $key, mixed $data, int $seconds = 0): void {
         $file = $this->getFileName($key, false);
 
         $json = json_encode([
@@ -91,7 +91,7 @@ class FileStorage implements CacheInterface {
      *
      * @return mixed
      */
-    public function get(string $key) {
+    public function get(string $key): mixed {
         $file = $this->getFileName($key);
 
         if ($file !== false) {
@@ -151,7 +151,7 @@ class FileStorage implements CacheInterface {
      *
      * @return bool|string
      */
-    private function getFileName(string $key, bool $check = true) {
+    private function getFileName(string $key, bool $check = true): bool|string {
         $key = md5($key.$this->secret_key);
         $file = realpath($this->path).'/'.$key.'.cache';
 

@@ -48,7 +48,7 @@ if ($cache->isConnected()) {
 
 ## Requirements
 
-- PHP >= 7.4
+- PHP >= 8.1
 
 ## Testing
 

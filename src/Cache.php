@@ -18,17 +18,12 @@ class Cache {
     /**
      * @const string Cache version
      */
-    public const VERSION = '1.0.0';
+    public final const VERSION = '2.0.0';
 
     /**
      * @var CacheInterface
      */
-    private CacheInterface $cache;
-
-    /**
-     * @var array
-     */
-    private array $config;
+    private readonly CacheInterface $cache;
 
     /**
      * @param array $config
@@ -37,13 +32,11 @@ class Cache {
      * @uses \RobiNN\Cache\Storages\RedisStorage
      * @uses \RobiNN\Cache\Storages\FileStorage
      */
-    public function __construct(array $config = []) {
-        $this->config = $config;
+    public function __construct(private array $config = []) {
         $storage = in_array($this->config['storage'], ['file', 'memcache', 'redis']) ? $this->config['storage'] : 'file';
         $this->config['storage'] = ucfirst($storage).'Storage';
 
-        $class = '\\RobiNN\\Cache\\Storages\\'.$this->config['storage'];
-        $cache_class = new $class($this->config);
+        $cache_class = new ('\\RobiNN\\Cache\\Storages\\'.$this->config['storage'])($this->config);
         $this->cache = $cache_class instanceof CacheInterface ? $cache_class : new FileStorage($this->config);
     }
 
@@ -85,7 +78,7 @@ class Cache {
      *
      * @return void
      */
-    public function set(string $key, $data, int $seconds = 0): void {
+    public function set(string $key, mixed $data, int $seconds = 0): void {
         $this->cache->set($key, $data, $seconds);
     }
 
@@ -96,7 +89,7 @@ class Cache {
      *
      * @return mixed
      */
-    public function get(string $key) {
+    public function get(string $key): mixed {
         return $this->cache->get($key);
     }
 
