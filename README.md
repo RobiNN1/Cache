@@ -49,3 +49,9 @@ if ($cache->isConnected()) {
 ## Requirements
 
 - PHP >= 8.1
+
+## Testing
+
+```
+composer test
+```
