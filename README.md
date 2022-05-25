@@ -8,6 +8,8 @@
 composer require robinn/cache
 ```
 
+> If you need support for PHP 7.4, use version 1.0.0.
+
 ## Usage
 
 ```php
