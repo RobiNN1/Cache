@@ -8,16 +8,14 @@
 composer require robinn/cache
 ```
 
-> If you need support for PHP 7.4, use version 1.0.0.
-
 ## Usage
 
 ```php
 $cache = new RobiNN\Cache\Cache([
     // Available config options
     'storage'        => 'file', // file|memcache|redis
-    'memcache_hosts' => ['localhost:11211'], // e.g. ['localhost:11211', '192.168.1.100:11211', 'unix:///var/tmp/memcached.sock']
-    'redis_hosts'    => ['localhost:6379'], // e.g. ['localhost:6379', '192.168.1.100:6379:1:passwd']
+    'memcache_hosts' => ['localhost:11211'], // e.g. ['localhost:11211', '192.168.1.100:11211', ['host' => 'localhost', 'port' => 11211]]
+    'redis_hosts'    => ['localhost:6379'], // e.g. ['localhost:6379', '192.168.1.100:6379:1:passwd', ['host' => 'localhost', 'port' => 6379, 'password' => 'passwd']]
     'path'           => __DIR__.'/cache', // for FileCache
     'secret_key'     => 'cache_secret_key', // Any random string to secure FileCache
 ]);

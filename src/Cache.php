@@ -18,7 +18,7 @@ class Cache {
     /**
      * @const string Cache version
      */
-    public final const VERSION = '2.0.0';
+    public final const VERSION = '2.0.1';
 
     /**
      * @var CacheInterface

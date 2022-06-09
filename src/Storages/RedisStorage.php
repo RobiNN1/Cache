@@ -33,18 +33,25 @@ class RedisStorage implements CacheInterface {
      * @throws CacheException
      */
     public function __construct(array $config) {
-        if (class_exists('\Redis')) {
+        if (extension_loaded('redis')) {
             $this->redis = new \Redis();
         } else {
             throw new CacheException('Failed to load Redis Class.');
         }
 
-        foreach ($config['redis_hosts'] as $host) {
-            [$host, $port, $database, $password] = array_pad(explode(':', $host, 4), 4, null);
+        foreach ($config['redis_hosts'] as $rhost) {
+            if (is_string($rhost)) {
+                [$host, $port, $database, $password] = array_pad(explode(':', $rhost, 4), 4, null);
 
-            $host = $host ?? '127.0.0.1';
-            $port = ($port !== null) ? (int) $port : 6379;
-            $database = $database ?? 0;
+                $host ??= '127.0.0.1';
+                $port = ($port !== null) ? (int) $port : 6379;
+                $database ??= 0;
+            } else {
+                $host = $rhost['host'];
+                $port = $rhost['port'];
+                $database = $rhost['database'] ?? 0;
+                $password = $rhost['password'];
+            }
 
             try {
                 $this->redis->connect($host, $port);

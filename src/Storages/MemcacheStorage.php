@@ -39,23 +39,24 @@ class MemcacheStorage implements CacheInterface {
      * @throws CacheException
      */
     public function __construct(array $config) {
-        if (class_exists('\Memcached')) {
+        if (extension_loaded('memcached')) {
             $this->memcache = new \Memcached();
             $this->is_memcached = true;
-        } elseif (class_exists('\Memcache')) {
+        } elseif (extension_loaded('memcache')) {
             $this->memcache = new \Memcache();
         } else {
             throw new CacheException('Failed to load Memcached or Memcache Class.');
         }
 
-        foreach ($config['memcache_hosts'] as $host) {
-            if (!str_starts_with($host, 'unix://')) {
-                [$host, $port] = explode(':', (string) $host);
+        foreach ($config['memcache_hosts'] as $mhost) {
+            if (is_string($mhost)) {
+                [$host, $port] = explode(':', $mhost);
                 if (!$port) {
                     $port = 11211;
                 }
             } else {
-                $port = 0;
+                $host = $mhost['host'];
+                $port = $mhost['port'];
             }
 
             $this->memcache->addServer($host, (int) $port);
