@@ -47,7 +47,7 @@
     }
   },
   "scripts": {
-    "phpstan": "phpstan",
-    "test": "phpunit"
+    "phpstan": "phpstan --ansi",
+    "test": "phpunit --colors=always"
   }
 }

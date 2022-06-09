@@ -45,15 +45,12 @@ class MemcacheStorage implements CacheInterface {
         } elseif (extension_loaded('memcache')) {
             $this->memcache = new \Memcache();
         } else {
-            throw new CacheException('Failed to load Memcached or Memcache Class.');
+            throw new CacheException('Memcache(d) extension is not installed.');
         }
 
         foreach ($config['memcache_hosts'] as $mhost) {
             if (is_string($mhost)) {
                 [$host, $port] = explode(':', $mhost);
-                if (!$port) {
-                    $port = 11211;
-                }
             } else {
                 $host = $mhost['host'];
                 $port = $mhost['port'];

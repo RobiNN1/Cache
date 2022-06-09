@@ -36,21 +36,19 @@ class RedisStorage implements CacheInterface {
         if (extension_loaded('redis')) {
             $this->redis = new \Redis();
         } else {
-            throw new CacheException('Failed to load Redis Class.');
+            throw new CacheException('Redis extension is not installed.');
         }
 
         foreach ($config['redis_hosts'] as $rhost) {
             if (is_string($rhost)) {
                 [$host, $port, $database, $password] = array_pad(explode(':', $rhost, 4), 4, null);
-
-                $host ??= '127.0.0.1';
                 $port = ($port !== null) ? (int) $port : 6379;
                 $database ??= 0;
             } else {
                 $host = $rhost['host'];
                 $port = $rhost['port'];
                 $database = $rhost['database'] ?? 0;
-                $password = $rhost['password'];
+                $password = $rhost['password'] ?? null;
             }
 
             try {
@@ -60,11 +58,11 @@ class RedisStorage implements CacheInterface {
             }
 
             if ($password !== null && $this->redis->auth($password) === false) {
-                throw new CacheException('Could not authenticate with Redis server. Please check password.');
+                throw new CacheException(sprintf('Could not authenticate with Redis server (%s:%s). Please check password.', $host, $port));
             }
 
             if ($database !== 0 && $this->redis->select($database) === false) {
-                throw new CacheException('Could not select Redis database. Please check database setting.');
+                throw new CacheException(sprintf('Could not select Redis database (%s:%s). Please check database setting.', $host, $port));
             }
         }
     }

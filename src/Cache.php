@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace RobiNN\Cache;
 
-use RobiNN\Cache\Storages\FileStorage;
-
 class Cache {
     /**
      * @const string Cache version
@@ -37,7 +35,7 @@ class Cache {
         $this->config['storage'] = ucfirst($storage).'Storage';
 
         $cache_class = new ('\\RobiNN\\Cache\\Storages\\'.$this->config['storage'])($this->config);
-        $this->cache = $cache_class instanceof CacheInterface ? $cache_class : new FileStorage($this->config);
+        $this->cache = $cache_class instanceof CacheInterface ? $cache_class : new Storages\FileStorage($this->config);
     }
 
     /**
