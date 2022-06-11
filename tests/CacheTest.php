@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 use RobiNN\Cache\Cache;
 
 abstract class CacheTest extends TestCase {
-    public Cache $cache;
+    protected Cache $cache;
 
     public function testConnection(): void {
         $this->assertTrue($this->cache->isConnected());

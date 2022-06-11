@@ -32,13 +32,14 @@ class FileStorage implements CacheInterface {
      * @throws CacheException
      */
     public function __construct(array $config) {
+        $config = $config['file'];
         $this->path = $config['path'];
 
         if (!is_dir($this->path) && false === @mkdir($this->path, 0777, true) && !is_dir($this->path)) {
             throw new CacheException(sprintf('Unable to create the "%s" directory.', $this->path));
         }
 
-        $this->secret_key = md5(!empty($config['secret_key']) ? $config['secret_key'] : 'cache_secret_key');
+        $this->secret_key = md5(!empty($config['secret']) ? $config['secret'] : 'cache_secret_key');
     }
 
     /**

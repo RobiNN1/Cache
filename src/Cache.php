@@ -16,35 +16,26 @@ class Cache {
     /**
      * @const string Cache version
      */
-    public final const VERSION = '2.0.1';
+    public final const VERSION = '2.1.0';
 
     /**
-     * @var CacheInterface
+     * @var ?CacheInterface
      */
-    private readonly CacheInterface $cache;
+    private readonly ?CacheInterface $cache;
 
     /**
      * @param array $config
      *
-     * @uses \RobiNN\Cache\Storages\MemcacheStorage
-     * @uses \RobiNN\Cache\Storages\RedisStorage
-     * @uses \RobiNN\Cache\Storages\FileStorage
+     * @uses Storages\FileStorage
+     * @uses Storages\MemcacheStorage
+     * @uses Storages\RedisStorage
      */
-    public function __construct(private array $config = []) {
-        $storage = in_array($this->config['storage'], ['file', 'memcache', 'redis']) ? $this->config['storage'] : 'file';
-        $this->config['storage'] = ucfirst($storage).'Storage';
+    public function __construct(array $config = []) {
+        $storage = in_array($config['storage'], ['file', 'memcache', 'redis']) ? $config['storage'] : 'file';
+        $config['storage'] = ucfirst($storage).'Storage';
 
-        $cache_class = new ('\\RobiNN\\Cache\\Storages\\'.$this->config['storage'])($this->config);
-        $this->cache = $cache_class instanceof CacheInterface ? $cache_class : new Storages\FileStorage($this->config);
-    }
-
-    /**
-     * Get the name of the currently used storage type.
-     *
-     * @return string
-     */
-    public function getStorageType(): string {
-        return $this->config['storage'];
+        $cache_class = new ('\\RobiNN\\Cache\\Storages\\'.$config['storage'])($config);
+        $this->cache = $cache_class instanceof CacheInterface ? $cache_class : null;
     }
 
     /**

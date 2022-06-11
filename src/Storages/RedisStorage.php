@@ -39,30 +39,26 @@ class RedisStorage implements CacheInterface {
             throw new CacheException('Redis extension is not installed.');
         }
 
-        foreach ($config['redis_hosts'] as $rhost) {
-            if (is_string($rhost)) {
-                [$host, $port, $database, $password] = array_pad(explode(':', $rhost, 4), 4, null);
-                $port = ($port !== null) ? (int) $port : 6379;
-                $database ??= 0;
-            } else {
-                $host = $rhost['host'];
-                $port = $rhost['port'];
-                $database = $rhost['database'] ?? 0;
-                $password = $rhost['password'] ?? null;
-            }
+        foreach ($config['redis'] as $server) {
+            $server['port'] ??= 6379;
+            $server['database'] ??= 0;
 
             try {
-                $this->redis->connect($host, $port);
+                $this->redis->connect($server['host'], $server['port']);
             } catch (Exception) {
                 $this->connection = false;
             }
 
-            if ($password !== null && $this->redis->auth($password) === false) {
-                throw new CacheException(sprintf('Could not authenticate with Redis server (%s:%s). Please check password.', $host, $port));
+            if (isset($server['password']) && $this->redis->auth($server['password']) === false) {
+                throw new CacheException(
+                    sprintf('Could not authenticate with Redis server (%s:%s). Please check password.', $server['host'], $server['port'])
+                );
             }
 
-            if ($database !== 0 && $this->redis->select($database) === false) {
-                throw new CacheException(sprintf('Could not select Redis database (%s:%s). Please check database setting.', $host, $port));
+            if ($server['database'] !== 0 && $this->redis->select($server['database']) === false) {
+                throw new CacheException(
+                    sprintf('Could not select Redis database (%s:%s). Please check database setting.', $server['host'], $server['port'])
+                );
             }
         }
     }

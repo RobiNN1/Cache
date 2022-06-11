@@ -18,7 +18,7 @@ final class FileCacheTest extends CacheTest {
     protected function setUp(): void {
         $this->cache = new Cache([
             'storage' => 'file',
-            'path'    => __DIR__.'/cache',
+            'file'    => ['path' => __DIR__.'/cache'],
         ]);
     }
 }

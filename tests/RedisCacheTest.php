@@ -17,8 +17,8 @@ use RobiNN\Cache\Cache;
 final class RedisCacheTest extends CacheTest {
     protected function setUp(): void {
         $this->cache = new Cache([
-            'storage'     => 'redis',
-            'redis_hosts' => ['127.0.0.1:6379'],
+            'storage' => 'redis',
+            'redis'   => [['host' => '127.0.0.1']],
         ]);
     }
 }

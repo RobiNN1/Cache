@@ -17,8 +17,8 @@ use RobiNN\Cache\Cache;
 final class MemcacheCacheTest extends CacheTest {
     protected function setUp(): void {
         $this->cache = new Cache([
-            'storage'        => 'memcache',
-            'memcache_hosts' => ['127.0.0.1:11211'],
+            'storage'  => 'memcache',
+            'memcache' => [['host' => '127.0.0.1']],
         ]);
     }
 }
