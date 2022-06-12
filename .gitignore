@@ -3,4 +3,4 @@
 vendor
 .phpunit.result.cache
 composer.lock
-tests/cache
+tests/cache_output

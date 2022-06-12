@@ -18,7 +18,7 @@ final class RedisCacheTest extends CacheTest {
     protected function setUp(): void {
         $this->cache = new Cache([
             'storage' => 'redis',
-            'redis'   => [['host' => '127.0.0.1']],
+            'redis'   => ['host' => '127.0.0.1'],
         ]);
     }
 }

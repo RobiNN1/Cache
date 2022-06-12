@@ -48,11 +48,22 @@ class MemcacheStorage implements CacheInterface {
             throw new CacheException('Memcache(d) extension is not installed.');
         }
 
-        foreach ($config['memcache'] as $server) {
-            $this->memcache->addServer($server['host'], ($server['port'] ?? 11211));
+        $server = $config['memcache'];
 
-            $stats = $this->is_memcached ? array_values($this->memcache->getStats())[0] : $this->memcache->getStats();
-            $this->connection = !empty($stats) && (!empty($stats['pid']) && $stats['pid'] > 0);
+        $server['port'] ??= 11211;
+
+        $this->memcache->addServer($server['host'], $server['port']);
+
+        if ($this->is_memcached) {
+            $this->connection = $this->memcache->getVersion() || $this->memcache->getResultCode() === $this->memcache::RES_SUCCESS;
+        } else {
+            $this->connection = $this->memcache->getServerStatus($server['host'], $server['port']) !== 0;
+        }
+
+        if (!$this->connection) {
+            throw new CacheException(
+                sprintf('Failed to connect to Memcache(d) server (%s:%s).', $server['host'], $server['port'])
+            );
         }
     }
 

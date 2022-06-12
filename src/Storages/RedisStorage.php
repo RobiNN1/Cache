@@ -39,27 +39,36 @@ class RedisStorage implements CacheInterface {
             throw new CacheException('Redis extension is not installed.');
         }
 
-        foreach ($config['redis'] as $server) {
-            $server['port'] ??= 6379;
-            $server['database'] ??= 0;
+        $server = $config['redis'];
 
-            try {
-                $this->redis->connect($server['host'], $server['port']);
-            } catch (Exception) {
-                $this->connection = false;
-            }
+        $server['port'] ??= 6379;
+        $server['database'] ??= 0;
 
-            if (isset($server['password']) && $this->redis->auth($server['password']) === false) {
-                throw new CacheException(
-                    sprintf('Could not authenticate with Redis server (%s:%s). Please check password.', $server['host'], $server['port'])
-                );
-            }
+        try {
+            $this->redis->connect($server['host'], $server['port']);
+        } catch (Exception $e) {
+            $this->connection = false;
+            throw new CacheException(
+                sprintf('Failed to connect to Redis server (%s:%s). Error: %s', $server['host'], $server['port'], $e->getMessage())
+            );
+        }
 
-            if ($server['database'] !== 0 && $this->redis->select($server['database']) === false) {
-                throw new CacheException(
-                    sprintf('Could not select Redis database (%s:%s). Please check database setting.', $server['host'], $server['port'])
-                );
+        try {
+            if (isset($server['password'])) {
+                $this->redis->auth($server['password']);
             }
+        } catch (Exception $e) {
+            throw new CacheException(
+                sprintf('Could not authenticate with Redis server (%s:%s). Error: %s', $server['host'], $server['port'], $e->getMessage())
+            );
+        }
+
+        try {
+            $this->redis->select($server['database']);
+        } catch (Exception $e) {
+            throw new CacheException(
+                sprintf('Could not select Redis database (%s:%s). Error: %s', $server['host'], $server['port'], $e->getMessage())
+            );
         }
     }
 

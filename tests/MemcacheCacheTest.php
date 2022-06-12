@@ -18,7 +18,7 @@ final class MemcacheCacheTest extends CacheTest {
     protected function setUp(): void {
         $this->cache = new Cache([
             'storage'  => 'memcache',
-            'memcache' => [['host' => '127.0.0.1']],
+            'memcache' => ['host' => '127.0.0.1'],
         ]);
     }
 }

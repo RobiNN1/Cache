@@ -16,7 +16,7 @@ class Cache {
     /**
      * @const string Cache version
      */
-    public final const VERSION = '2.1.0';
+    public final const VERSION = '2.2.0';
 
     /**
      * @var ?CacheInterface
@@ -26,16 +26,17 @@ class Cache {
     /**
      * @param array $config
      *
-     * @uses Storages\FileStorage
+     * @throws CacheException
      * @uses Storages\MemcacheStorage
      * @uses Storages\RedisStorage
+     * @uses Storages\FileStorage
      */
     public function __construct(array $config = []) {
         $storage = in_array($config['storage'], ['file', 'memcache', 'redis']) ? $config['storage'] : 'file';
         $config['storage'] = ucfirst($storage).'Storage';
 
         $cache_class = new ('\\RobiNN\\Cache\\Storages\\'.$config['storage'])($config);
-        $this->cache = $cache_class instanceof CacheInterface ? $cache_class : null;
+        $this->cache = $cache_class instanceof CacheInterface ? $cache_class : new Storages\FileStorage($config);
     }
 
     /**

@@ -15,8 +15,8 @@ $cache = new RobiNN\Cache\Cache([
     // Available config options
     'storage'  => 'file', // file|memcache|redis
     'file'     => ['path' => __DIR__.'/cache'], // ['path' => __DIR__.'/cache', 'secret' => 'cache_secret_key']
-    'memcache' => [['host' => '127.0.0.1']], // ['host' => '127.0.0.1', 'port' => 11211]
-    'redis'    => [['host' => '127.0.0.1']], // ['host' => '127.0.0.1', 'port' => 6379, 'password' => 'pwd', 'database' => 0]
+    'memcache' => ['host' => '127.0.0.1'], // ['host' => '127.0.0.1', 'port' => 11211]
+    'redis'    => ['host' => '127.0.0.1'], // ['host' => '127.0.0.1', 'port' => 6379, 'password' => 'pwd', 'database' => 0]
 ]);
 
 if ($cache->isConnected()) {
