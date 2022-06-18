@@ -5,8 +5,9 @@
 *.* text eol=lf
 
 # Files and directories with the attribute export-ignore won’t be added to archive files.
-tests export-ignore
+.github export-ignore
 .gitattributes export-ignore
 .gitignore export-ignore
+tests export-ignore
 phpstan.neon export-ignore
 phpunit.xml export-ignore
