@@ -15,10 +15,19 @@ namespace Tests;
 use RobiNN\Cache\Cache;
 
 final class FileCacheTest extends CacheTest {
+    private string $cache_path = __DIR__.'/cache_output';
+
     protected function setUp(): void {
         $this->cache = new Cache([
             'storage' => 'file',
-            'file'    => ['path' => __DIR__.'/cache_output'],
+            'file'    => ['path' => $this->cache_path],
         ]);
+
+        register_shutdown_function(function (): void {
+            if (file_exists($this->cache_path)) {
+                array_map('unlink', glob($this->cache_path.'/*'));
+                rmdir($this->cache_path);
+            }
+        });
     }
 }

@@ -13,8 +13,7 @@ declare(strict_types=1);
 namespace RobiNN\Cache\Storages;
 
 use Exception;
-use RobiNN\Cache\CacheException;
-use RobiNN\Cache\CacheInterface;
+use RobiNN\Cache\{CacheException, CacheInterface};
 
 class RedisStorage implements CacheInterface {
     /**

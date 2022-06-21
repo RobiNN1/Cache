@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace RobiNN\Cache\Storages;
 
-use RobiNN\Cache\CacheException;
-use RobiNN\Cache\CacheInterface;
+use Exception;
+use RobiNN\Cache\{CacheException, CacheInterface};
 
 class FileStorage implements CacheInterface {
     /**
@@ -74,14 +74,18 @@ class FileStorage implements CacheInterface {
     public function set(string $key, mixed $data, int $seconds = 0): void {
         $file = $this->getFileName($key, false);
 
-        $json = json_encode([
-            'time'   => time(),
-            'expire' => $seconds,
-            'data'   => serialize($data),
-        ]);
+        try {
+            $json = json_encode([
+                'time'   => time(),
+                'expire' => $seconds,
+                'data'   => serialize($data),
+            ], JSON_THROW_ON_ERROR);
 
-        if (@file_put_contents($file, $json, LOCK_EX) === strlen((string) $json)) {
-            @chmod($file, 0777);
+            if (@file_put_contents($file, $json, LOCK_EX) === strlen((string) $json)) {
+                @chmod($file, 0777);
+            }
+        } catch (Exception $e) {
+            echo $e->getMessage();
         }
     }
 
@@ -96,13 +100,17 @@ class FileStorage implements CacheInterface {
         $file = $this->getFileName($key);
 
         if ($file !== false) {
-            $data = json_decode(file_get_contents($file), true);
+            try {
+                $data = json_decode(file_get_contents($file), true, 512, JSON_THROW_ON_ERROR);
 
-            if ($this->isExpired($data)) {
-                $this->delete($key);
+                if ($this->isExpired($data)) {
+                    $this->delete($key);
+                }
+
+                return unserialize($data['data'], ['allowed_classes' => false]);
+            } catch (Exception $e) {
+                return $e->getMessage();
             }
-
-            return unserialize($data['data'], ['allowed_classes' => false]);
         }
 
         return null;
