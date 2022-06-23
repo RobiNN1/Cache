@@ -12,7 +12,8 @@ declare(strict_types=1);
 
 namespace RobiNN\Cache\Storages;
 
-use RobiNN\Cache\{CacheException, CacheInterface};
+use RobiNN\Cache\CacheException;
+use RobiNN\Cache\CacheInterface;
 
 class MemcacheStorage implements CacheInterface {
     /**

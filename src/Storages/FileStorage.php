@@ -13,7 +13,8 @@ declare(strict_types=1);
 namespace RobiNN\Cache\Storages;
 
 use Exception;
-use RobiNN\Cache\{CacheException, CacheInterface};
+use RobiNN\Cache\CacheException;
+use RobiNN\Cache\CacheInterface;
 
 class FileStorage implements CacheInterface {
     /**
