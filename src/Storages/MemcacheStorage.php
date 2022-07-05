@@ -34,7 +34,7 @@ class MemcacheStorage implements CacheInterface {
     private bool $is_memcached = false;
 
     /**
-     * @param array $config
+     * @param array<string, mixed> $config
      *
      * @throws CacheException
      */

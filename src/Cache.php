@@ -16,7 +16,7 @@ class Cache {
     /**
      * @const string Cache version
      */
-    final public const VERSION = '2.2.1';
+    final public const VERSION = '2.2.2';
 
     /**
      * @var ?CacheInterface
@@ -24,7 +24,7 @@ class Cache {
     private readonly ?CacheInterface $cache;
 
     /**
-     * @param array $config
+     * @param array<string, mixed> $config
      *
      * @throws CacheException
      * @uses Storages\MemcacheStorage

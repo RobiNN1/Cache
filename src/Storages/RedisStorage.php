@@ -28,7 +28,7 @@ class RedisStorage implements CacheInterface {
     private bool $connection = true;
 
     /**
-     * @param array $config
+     * @param array<string, mixed> $config
      *
      * @throws CacheException
      */

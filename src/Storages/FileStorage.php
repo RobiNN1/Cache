@@ -28,7 +28,7 @@ class FileStorage implements CacheInterface {
     private readonly string $secret_key;
 
     /**
-     * @param array $config
+     * @param array<string, mixed> $config
      *
      * @throws CacheException
      */
@@ -175,7 +175,7 @@ class FileStorage implements CacheInterface {
     /**
      * Check if the item is expired or not.
      *
-     * @param array $data
+     * @param array<string, mixed> $data
      *
      * @return bool
      */
