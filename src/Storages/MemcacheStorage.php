@@ -98,9 +98,9 @@ class MemcacheStorage implements CacheInterface {
      */
     public function set(string $key, mixed $data, int $seconds = 0): void {
         if ($this->is_memcached) {
-            $this->memcache->set($key, $data, $seconds);
+            $this->memcache->set($key, serialize($data), $seconds);
         } else {
-            $this->memcache->set($key, $data, 0, $seconds);
+            $this->memcache->set($key, serialize($data), 0, $seconds);
         }
     }
 
@@ -112,7 +112,7 @@ class MemcacheStorage implements CacheInterface {
      * @return mixed
      */
     public function get(string $key): mixed {
-        return $this->memcache->get($key);
+        return unserialize($this->memcache->get($key), ['allowed_classes' => false]);
     }
 
     /**
