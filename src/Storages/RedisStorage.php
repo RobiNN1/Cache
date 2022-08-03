@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace RobiNN\Cache\Storages;
 
 use Exception;
+use RedisException;
 use RobiNN\Cache\CacheException;
 use RobiNN\Cache\CacheInterface;
 
@@ -89,7 +90,11 @@ class RedisStorage implements CacheInterface {
      * @return bool
      */
     public function has(string $key): bool {
-        return (bool) $this->redis->exists($key);
+        try {
+            return (bool) $this->redis->exists($key);
+        } catch (RedisException) {
+            return false;
+        }
     }
 
     /**
@@ -102,10 +107,14 @@ class RedisStorage implements CacheInterface {
      * @return void
      */
     public function set(string $key, mixed $data, int $seconds = 0): void {
-        if ($seconds > 0) {
-            $this->redis->setEx($key, $seconds, serialize($data));
-        } else {
-            $this->redis->set($key, serialize($data));
+        try {
+            if ($seconds > 0) {
+                $this->redis->setEx($key, $seconds, serialize($data));
+            } else {
+                $this->redis->set($key, serialize($data));
+            }
+        } catch (RedisException) {
+            //
         }
     }
 
@@ -117,7 +126,11 @@ class RedisStorage implements CacheInterface {
      * @return mixed
      */
     public function get(string $key): mixed {
-        return unserialize($this->redis->get($key), ['allowed_classes' => false]);
+        try {
+            return unserialize($this->redis->get($key), ['allowed_classes' => false]);
+        } catch (RedisException) {
+            return false;
+        }
     }
 
     /**
@@ -128,7 +141,11 @@ class RedisStorage implements CacheInterface {
      * @return bool
      */
     public function delete(string $key): bool {
-        return (bool) $this->redis->del($key);
+        try {
+            return (bool) $this->redis->del($key);
+        } catch (RedisException) {
+            return false;
+        }
     }
 
     /**
@@ -137,6 +154,10 @@ class RedisStorage implements CacheInterface {
      * @return void
      */
     public function flush(): void {
-        $this->redis->flushAll();
+        try {
+            $this->redis->flushAll();
+        } catch (RedisException) {
+            //
+        }
     }
 }
