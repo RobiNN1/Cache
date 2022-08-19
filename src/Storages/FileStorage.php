@@ -40,7 +40,7 @@ class FileStorage implements CacheInterface {
             throw new CacheException(sprintf('Unable to create the "%s" directory.', $this->path));
         }
 
-        $this->secret_key = md5(!empty($config['secret']) ? $config['secret'] : 'cache_secret_key');
+        $this->secret_key = md5($config['secret'] ?? 'cache_secret_key');
     }
 
     /**
@@ -60,7 +60,7 @@ class FileStorage implements CacheInterface {
      * @return bool
      */
     public function has(string $key): bool {
-        return $this->getFileName($key) !== false;
+        return is_file($this->getFileName($key));
     }
 
     /**
@@ -73,7 +73,7 @@ class FileStorage implements CacheInterface {
      * @return void
      */
     public function set(string $key, mixed $data, int $seconds = 0): void {
-        $file = $this->getFileName($key, false);
+        $file = $this->getFileName($key);
 
         try {
             $json = json_encode([
@@ -100,9 +100,9 @@ class FileStorage implements CacheInterface {
     public function get(string $key): mixed {
         $file = $this->getFileName($key);
 
-        if ($file !== false) {
+        if (is_file($file)) {
             try {
-                $data = json_decode(file_get_contents($file), true, 512, JSON_THROW_ON_ERROR);
+                $data = json_decode((string) file_get_contents($file), true, 512, JSON_THROW_ON_ERROR);
 
                 if ($this->isExpired($data)) {
                     $this->delete($key);
@@ -127,7 +127,7 @@ class FileStorage implements CacheInterface {
     public function delete(string $key): bool {
         $file = $this->getFileName($key);
 
-        if ($file !== false) {
+        if (is_file($file)) {
             return @unlink($file);
         }
 
@@ -157,19 +157,13 @@ class FileStorage implements CacheInterface {
      * Get file name.
      *
      * @param string $key
-     * @param bool   $check
      *
-     * @return bool|string
+     * @return string
      */
-    private function getFileName(string $key, bool $check = true): bool|string {
+    private function getFileName(string $key): string {
         $key = md5($key.$this->secret_key);
-        $file = realpath($this->path).'/'.$key.'.cache';
 
-        if ($check) {
-            return is_file($file) ? $file : false;
-        }
-
-        return $file;
+        return realpath($this->path).'/'.$key.'.cache';
     }
 
     /**

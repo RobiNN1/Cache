@@ -12,14 +12,16 @@ declare(strict_types=1);
 
 namespace RobiNN\Cache\Storages;
 
+use Memcache;
+use Memcached;
 use RobiNN\Cache\CacheException;
 use RobiNN\Cache\CacheInterface;
 
 class MemcacheStorage implements CacheInterface {
     /**
-     * @var object
+     * @var Memcache|Memcached
      */
-    private object $memcache;
+    private Memcache|Memcached $memcache;
 
     /**
      * @var bool
@@ -40,10 +42,10 @@ class MemcacheStorage implements CacheInterface {
      */
     public function __construct(array $config) {
         if (extension_loaded('memcached')) {
-            $this->memcache = new \Memcached();
+            $this->memcache = new Memcached();
             $this->is_memcached = true;
         } elseif (extension_loaded('memcache')) {
-            $this->memcache = new \Memcache();
+            $this->memcache = new Memcache();
         } else {
             throw new CacheException('Memcache(d) extension is not installed.');
         }
@@ -57,7 +59,8 @@ class MemcacheStorage implements CacheInterface {
         if ($this->is_memcached) {
             $this->connection = $this->memcache->getVersion() || $this->memcache->getResultCode() === $this->memcache::RES_SUCCESS;
         } else {
-            $this->connection = $this->memcache->getServerStatus($server['host'], $server['port']) !== 0;
+            $stats = @$this->memcache->getStats();
+            $this->connection = isset($stats['pid']) && $stats['pid'] > 0;
         }
 
         if (!$this->connection) {

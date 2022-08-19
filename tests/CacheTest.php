@@ -31,6 +31,8 @@ abstract class CacheTest extends TestCase {
         $this->assertTrue($this->cache->has($key));
 
         $this->assertSame($data, $this->cache->get($key));
+
+        $this->cache->delete($key);
     }
 
     public function testDelete(): void {

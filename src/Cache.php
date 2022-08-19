@@ -16,26 +16,28 @@ class Cache {
     /**
      * @const string Cache version
      */
-    final public const VERSION = '2.2.4';
+    final public const VERSION = '2.2.5';
 
     /**
-     * @var ?CacheInterface
+     * @var CacheInterface
      */
-    private readonly ?CacheInterface $cache;
+    private CacheInterface $cache;
 
     /**
-     * @param array<string, mixed> $config
+     * @param array<string, mixed>  $config
+     * @param array<string, string> $custom_storages
      *
      * @throws CacheException
-     * @uses Storages\MemcacheStorage
-     * @uses Storages\RedisStorage
-     * @uses Storages\FileStorage
      */
-    public function __construct(array $config = []) {
-        $storage = in_array($config['storage'], ['file', 'memcache', 'redis']) ? $config['storage'] : 'file';
-        $config['storage'] = ucfirst($storage).'Storage';
+    public function __construct(array $config = [], array $custom_storages = []) {
+        $storages = array_merge([
+            'file'     => Storages\FileStorage::class,
+            'memcache' => Storages\MemcacheStorage::class,
+            'redis'    => Storages\RedisStorage::class,
+        ], $custom_storages);
 
-        $cache_class = new ('\\RobiNN\\Cache\\Storages\\'.$config['storage'])($config);
+        $storage = isset($storages[$config['storage']]) ? $config['storage'] : 'file';
+        $cache_class = new ($storages[$storage])($config);
         $this->cache = $cache_class instanceof CacheInterface ? $cache_class : new Storages\FileStorage($config);
     }
 

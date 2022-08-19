@@ -13,15 +13,16 @@ declare(strict_types=1);
 namespace RobiNN\Cache\Storages;
 
 use Exception;
+use Redis;
 use RedisException;
 use RobiNN\Cache\CacheException;
 use RobiNN\Cache\CacheInterface;
 
 class RedisStorage implements CacheInterface {
     /**
-     * @var object
+     * @var Redis
      */
-    private object $redis;
+    private Redis $redis;
 
     /**
      * @var bool
@@ -35,7 +36,7 @@ class RedisStorage implements CacheInterface {
      */
     public function __construct(array $config) {
         if (extension_loaded('redis')) {
-            $this->redis = new \Redis();
+            $this->redis = new Redis();
         } else {
             throw new CacheException('Redis extension is not installed.');
         }
@@ -127,7 +128,7 @@ class RedisStorage implements CacheInterface {
      */
     public function get(string $key): mixed {
         try {
-            return unserialize($this->redis->get($key), ['allowed_classes' => false]);
+            return unserialize((string) $this->redis->get($key), ['allowed_classes' => false]);
         } catch (RedisException) {
             return false;
         }

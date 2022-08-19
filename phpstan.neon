@@ -1,4 +1,7 @@
 parameters:
-  level: 6
+  level: 8
   paths:
     - src
+  ignoreErrors:
+    - '#Access to undefined constant Memcache|Memcached::RES_SUCCESS.#'
+    - '#Call to an undefined method Memcache|Memcached::getResultCode\(\).#'
