@@ -1,6 +1,8 @@
 {
   "name": "robinn/cache",
   "description": "Simple cache library.",
+  "license": "MIT",
+  "type": "library",
   "keywords": [
     "cache",
     "file",
@@ -8,8 +10,6 @@
     "memcached",
     "redis"
   ],
-  "license": "MIT",
-  "type": "library",
   "authors": [
     {
       "name": "Róbert Kelčák",
@@ -21,21 +21,21 @@
     "issues": "https://github.com/RobiNN1/Cache/issues",
     "source": "https://github.com/RobiNN1/Cache"
   },
-  "minimum-stability": "dev",
-  "prefer-stable": true,
   "require": {
     "php": ">=8.1",
     "ext-json": "*"
-  },
-  "suggest": {
-    "ext-memcache": "Required to use the memcache cache driver.",
-    "ext-memcached": "Required to use the memcached cache driver.",
-    "ext-redis": "Required to use the redis cache driver."
   },
   "require-dev": {
     "phpstan/phpstan": "^1.8",
     "phpunit/phpunit": "^9.5"
   },
+  "suggest": {
+    "ext-memcache": "Required to use the Memcache cache driver.",
+    "ext-memcached": "Required to use the Memcached cache driver.",
+    "ext-redis": "Required to use the Redis cache driver."
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "autoload": {
     "psr-4": {
       "RobiNN\\Cache\\": "src/"
