@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace RobiNN\Cache\Storages;
 
-use Exception;
+use JsonException;
 use RobiNN\Cache\CacheException;
 use RobiNN\Cache\CacheInterface;
 
@@ -85,7 +85,7 @@ class FileStorage implements CacheInterface {
             if (@file_put_contents($file, $json, LOCK_EX) === strlen((string) $json)) {
                 @chmod($file, 0777);
             }
-        } catch (Exception $e) {
+        } catch (JsonException $e) {
             echo $e->getMessage();
         }
     }
@@ -109,7 +109,7 @@ class FileStorage implements CacheInterface {
                 }
 
                 return unserialize($data['data'], ['allowed_classes' => false]);
-            } catch (Exception $e) {
+            } catch (JsonException $e) {
                 return $e->getMessage();
             }
         }
