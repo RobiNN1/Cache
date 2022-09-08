@@ -17,11 +17,11 @@ use Memcached;
 use RobiNN\Cache\CacheException;
 use RobiNN\Cache\CacheInterface;
 
-class MemcacheStorage implements CacheInterface {
+class MemcachedStorage implements CacheInterface {
     /**
      * @var Memcache|Memcached
      */
-    private Memcache|Memcached $memcache;
+    private Memcache|Memcached $memcached;
 
     /**
      * @var bool
@@ -36,37 +36,41 @@ class MemcacheStorage implements CacheInterface {
     private bool $is_memcached = false;
 
     /**
-     * @param array<string, mixed> $config
+     * @param array<string, mixed> $server
      *
      * @throws CacheException
      */
-    public function __construct(array $config) {
+    public function __construct(array $server) {
         if (extension_loaded('memcached')) {
-            $this->memcache = new Memcached();
+            $this->memcached = new Memcached();
             $this->is_memcached = true;
         } elseif (extension_loaded('memcache')) {
-            $this->memcache = new Memcache();
+            $this->memcached = new Memcache();
         } else {
             throw new CacheException('Memcache(d) extension is not installed.');
         }
 
-        $server = $config['memcache'];
+        if (isset($server['path'])) {
+            $memcached_server = $server['path'];
 
-        $server['port'] ??= 11211;
+            $this->memcached->addServer($server['path'], 0);
+        } else {
+            $server['port'] ??= 11211;
 
-        $this->memcache->addServer($server['host'], $server['port']);
+            $memcached_server = $server['host'].':'.$server['port'];
+
+            $this->memcached->addServer($server['host'], (int) $server['port']);
+        }
 
         if ($this->is_memcached) {
-            $this->connection = $this->memcache->getVersion() || $this->memcache->getResultCode() === $this->memcache::RES_SUCCESS;
+            $this->connection = $this->memcached->getVersion() || $this->memcached->getResultCode() === Memcached::RES_SUCCESS;
         } else {
-            $stats = @$this->memcache->getStats();
+            $stats = @$this->memcached->getStats();
             $this->connection = isset($stats['pid']) && $stats['pid'] > 0;
         }
 
         if (!$this->connection) {
-            throw new CacheException(
-                sprintf('Failed to connect to Memcache(d) server (%s:%s).', $server['host'], $server['port'])
-            );
+            throw new CacheException(sprintf('Failed to connect to Memcache(d) server (%s).', $memcached_server));
         }
     }
 
@@ -87,7 +91,7 @@ class MemcacheStorage implements CacheInterface {
      * @return bool
      */
     public function has(string $key): bool {
-        return (bool) $this->memcache->get($key);
+        return (bool) $this->memcached->get($key);
     }
 
     /**
@@ -101,9 +105,9 @@ class MemcacheStorage implements CacheInterface {
      */
     public function set(string $key, mixed $data, int $seconds = 0): void {
         if ($this->is_memcached) {
-            $this->memcache->set($key, serialize($data), $seconds);
+            $this->memcached->set($key, serialize($data), $seconds);
         } else {
-            $this->memcache->set($key, serialize($data), 0, $seconds);
+            $this->memcached->set($key, serialize($data), 0, $seconds);
         }
     }
 
@@ -115,7 +119,7 @@ class MemcacheStorage implements CacheInterface {
      * @return mixed
      */
     public function get(string $key): mixed {
-        return unserialize($this->memcache->get($key), ['allowed_classes' => false]);
+        return unserialize($this->memcached->get($key), ['allowed_classes' => false]);
     }
 
     /**
@@ -126,7 +130,7 @@ class MemcacheStorage implements CacheInterface {
      * @return bool
      */
     public function delete(string $key): bool {
-        return $this->memcache->delete($key);
+        return $this->memcached->delete($key);
     }
 
     /**
@@ -135,6 +139,6 @@ class MemcacheStorage implements CacheInterface {
      * @return void
      */
     public function flush(): void {
-        $this->memcache->flush();
+        $this->memcached->flush();
     }
 }

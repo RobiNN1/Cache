@@ -15,12 +15,11 @@ namespace Tests;
 use RobiNN\Cache\Cache;
 use RobiNN\Cache\CacheException;
 
-final class MemcacheCacheTest extends CacheTest {
+final class APCuCacheTest extends CacheTest {
     protected function setUp(): void {
         try {
             $this->cache = new Cache([
-                'storage'  => 'memcache',
-                'memcache' => ['host' => '127.0.0.1'],
+                'storage' => 'apcu',
             ]);
         } catch (CacheException $e) {
             echo $e->getMessage();

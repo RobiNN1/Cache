@@ -3,5 +3,4 @@ parameters:
   paths:
     - src
   ignoreErrors:
-    - '#Access to undefined constant Memcache|Memcached::RES_SUCCESS.#'
     - '#Call to an undefined method Memcache|Memcached::getResultCode\(\).#'

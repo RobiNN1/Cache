@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace RobiNN\Cache\Storages;
 
-use Exception;
 use Redis;
 use RedisException;
 use RobiNN\Cache\CacheException;
@@ -30,28 +29,35 @@ class RedisStorage implements CacheInterface {
     private bool $connection = true;
 
     /**
-     * @param array<string, mixed> $config
+     * @param array<string, mixed> $server
      *
      * @throws CacheException
      */
-    public function __construct(array $config) {
+    public function __construct(array $server) {
         if (extension_loaded('redis')) {
             $this->redis = new Redis();
         } else {
             throw new CacheException('Redis extension is not installed.');
         }
 
-        $server = $config['redis'];
+        if (isset($server['path'])) {
+            $redis_server = $server['path'];
+        } else {
+            $server['port'] ??= 6379;
 
-        $server['port'] ??= 6379;
-        $server['database'] ??= 0;
+            $redis_server = $server['host'].':'.$server['port'];
+        }
 
         try {
-            $this->redis->connect($server['host'], $server['port']);
-        } catch (Exception $e) {
+            if (isset($server['path'])) {
+                $this->redis->connect($server['path']);
+            } else {
+                $this->redis->connect($server['host'], (int) $server['port'], 3);
+            }
+        } catch (RedisException $e) {
             $this->connection = false;
             throw new CacheException(
-                sprintf('Failed to connect to Redis server (%s:%s). Error: %s', $server['host'], $server['port'], $e->getMessage())
+                sprintf('Failed to connect to Redis server (%s). Error: %s', $redis_server, $e->getMessage())
             );
         }
 
@@ -59,17 +65,19 @@ class RedisStorage implements CacheInterface {
             if (isset($server['password'])) {
                 $this->redis->auth($server['password']);
             }
-        } catch (Exception $e) {
+        } catch (RedisException $e) {
             throw new CacheException(
-                sprintf('Could not authenticate with Redis server (%s:%s). Error: %s', $server['host'], $server['port'], $e->getMessage())
+                sprintf('Could not authenticate with Redis server (%s). Error: %s', $redis_server, $e->getMessage())
             );
         }
 
         try {
+            $server['database'] ??= 0;
+
             $this->redis->select($server['database']);
-        } catch (Exception $e) {
+        } catch (RedisException $e) {
             throw new CacheException(
-                sprintf('Could not select Redis database (%s:%s). Error: %s', $server['host'], $server['port'], $e->getMessage())
+                sprintf('Could not select Redis database (%s). Error: %s', $redis_server, $e->getMessage())
             );
         }
     }
@@ -110,7 +118,7 @@ class RedisStorage implements CacheInterface {
     public function set(string $key, mixed $data, int $seconds = 0): void {
         try {
             if ($seconds > 0) {
-                $this->redis->setEx($key, $seconds, serialize($data));
+                $this->redis->setex($key, $seconds, serialize($data));
             } else {
                 $this->redis->set($key, serialize($data));
             }

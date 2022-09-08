@@ -13,10 +13,23 @@ composer require robinn/cache
 ```php
 $cache = new RobiNN\Cache\Cache([
     // Available config options
-    'storage'  => 'file', // file|memcache|redis
-    'file'     => ['path' => __DIR__.'/cache'], // ['path' => __DIR__.'/cache', 'secret' => 'cache_secret_key']
-    'memcache' => ['host' => '127.0.0.1'], // ['host' => '127.0.0.1', 'port' => 11211]
-    'redis'    => ['host' => '127.0.0.1'], // ['host' => '127.0.0.1', 'port' => 6379, 'password' => 'pwd', 'database' => 0]
+    'storage'   => 'file', // apcu|file|memcached|redis
+    'file'      => [
+        'path' => __DIR__.'/cache',
+        //'secret' => 'cache_secret_key', // Optional
+    ],
+    'memcached' => [
+        'host' => '127.0.0.1', // Optional, when a path is specified
+        'port' => 11211, // Optional, when the default port is used
+        //'path' => '/var/run/memcached/memcached.sock', // Optional
+    ],
+    'redis'     => [
+        'host' => '127.0.0.1', // Optional, when a path is specified
+        'port' => 6379, // Optional, when the default port is used
+        //'database' => 0, // Optional
+        //'password' => '', // Optional
+        //'path'     => '/var/run/redis/redis-server.sock', // Optional
+    ],
 ]);
 
 if ($cache->isConnected()) {

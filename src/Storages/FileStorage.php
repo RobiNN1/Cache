@@ -33,7 +33,6 @@ class FileStorage implements CacheInterface {
      * @throws CacheException
      */
     public function __construct(array $config) {
-        $config = $config['file'];
         $this->path = $config['path'];
 
         if (!is_dir($this->path) && false === @mkdir($this->path, 0777, true) && !is_dir($this->path)) {

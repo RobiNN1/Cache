@@ -10,37 +10,19 @@
 
 declare(strict_types=1);
 
-namespace RobiNN\Cache;
+namespace RobiNN\Cache\Storages;
 
-class Cache {
-    /**
-     * @const string Cache version
-     */
-    final public const VERSION = '2.3.0';
+use RobiNN\Cache\CacheException;
+use RobiNN\Cache\CacheInterface;
 
+class APCuStorage implements CacheInterface {
     /**
-     * @var CacheInterface
-     */
-    private CacheInterface $cache;
-
-    /**
-     * @param array<string, mixed>  $config
-     * @param array<string, string> $custom_storages
-     *
      * @throws CacheException
      */
-    public function __construct(array $config = [], array $custom_storages = []) {
-        $storages = array_merge([
-            'apcu'      => Storages\APCuStorage::class,
-            'file'      => Storages\FileStorage::class,
-            'memcached' => Storages\MemcachedStorage::class,
-            'redis'     => Storages\RedisStorage::class,
-        ], $custom_storages);
-
-        $storage = isset($storages[$config['storage']]) ? $config['storage'] : 'file';
-        $server_info = $config[$config['storage']] ?? [];
-        $cache_class = new ($storages[$storage])($server_info);
-        $this->cache = $cache_class instanceof CacheInterface ? $cache_class : new Storages\FileStorage($server_info);
+    public function __construct() {
+        if (!extension_loaded('apcu')) {
+            throw new CacheException('APCu extension is not installed.');
+        }
     }
 
     /**
@@ -49,7 +31,7 @@ class Cache {
      * @return bool
      */
     public function isConnected(): bool {
-        return $this->cache->isConnected();
+        return true;
     }
 
     /**
@@ -60,7 +42,7 @@ class Cache {
      * @return bool
      */
     public function has(string $key): bool {
-        return $this->cache->has($key);
+        return apcu_exists($key);
     }
 
     /**
@@ -73,7 +55,7 @@ class Cache {
      * @return void
      */
     public function set(string $key, mixed $data, int $seconds = 0): void {
-        $this->cache->set($key, $data, $seconds);
+        apcu_store($key, serialize($data), $seconds);
     }
 
     /**
@@ -84,7 +66,7 @@ class Cache {
      * @return mixed
      */
     public function get(string $key): mixed {
-        return $this->cache->get($key);
+        return unserialize(apcu_fetch($key), ['allowed_classes' => false]);
     }
 
     /**
@@ -95,7 +77,7 @@ class Cache {
      * @return bool
      */
     public function delete(string $key): bool {
-        return $this->cache->delete($key);
+        return (bool) apcu_delete($key);
     }
 
     /**
@@ -104,6 +86,6 @@ class Cache {
      * @return void
      */
     public function flush(): void {
-        $this->cache->flush();
+        apcu_clear_cache();
     }
 }
