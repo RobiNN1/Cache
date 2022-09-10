@@ -22,13 +22,15 @@ $cache = new RobiNN\Cache\Cache([
         'host' => '127.0.0.1', // Optional, when a path is specified
         'port' => 11211, // Optional, when the default port is used
         //'path' => '/var/run/memcached/memcached.sock', // Optional
+        //'sasl_username' => '', // Optional, when not using SASL
+        //'sasl_password' => '', // Optional, when not using SASL
     ],
     'redis'     => [
         'host' => '127.0.0.1', // Optional, when a path is specified
         'port' => 6379, // Optional, when the default port is used
         //'database' => 0, // Optional
         //'password' => '', // Optional
-        //'path'     => '/var/run/redis/redis-server.sock', // Optional
+        //'path' => '/var/run/redis/redis-server.sock', // Optional
     ],
 ]);
 

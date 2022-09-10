@@ -16,14 +16,13 @@ use RobiNN\Cache\Cache;
 use RobiNN\Cache\CacheException;
 
 final class MemcachedCacheTest extends CacheTest {
+    /**
+     * @throws CacheException
+     */
     protected function setUp(): void {
-        try {
-            $this->cache = new Cache([
-                'storage'   => 'memcached',
-                'memcached' => ['host' => '127.0.0.1'],
-            ]);
-        } catch (CacheException $e) {
-            echo $e->getMessage();
-        }
+        $this->cache = new Cache([
+            'storage'   => 'memcached',
+            'memcached' => ['host' => '127.0.0.1'],
+        ]);
     }
 }

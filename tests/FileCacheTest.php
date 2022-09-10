@@ -18,21 +18,20 @@ use RobiNN\Cache\CacheException;
 final class FileCacheTest extends CacheTest {
     private string $cache_path = __DIR__.'/cache_output';
 
+    /**
+     * @throws CacheException
+     */
     protected function setUp(): void {
-        try {
-            $this->cache = new Cache([
-                'storage' => 'file',
-                'file'    => ['path' => $this->cache_path],
-            ]);
+        $this->cache = new Cache([
+            'storage' => 'file',
+            'file'    => ['path' => $this->cache_path],
+        ]);
+    }
 
-            register_shutdown_function(function (): void {
-                if (file_exists($this->cache_path)) {
-                    array_map('unlink', glob($this->cache_path.'/*'));
-                    rmdir($this->cache_path);
-                }
-            });
-        } catch (CacheException $e) {
-            echo $e->getMessage();
+    protected function tearDown(): void {
+        if (file_exists($this->cache_path)) {
+            array_map('unlink', glob($this->cache_path.'/*'));
+            rmdir($this->cache_path);
         }
     }
 }

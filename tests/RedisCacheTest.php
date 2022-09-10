@@ -16,14 +16,13 @@ use RobiNN\Cache\Cache;
 use RobiNN\Cache\CacheException;
 
 final class RedisCacheTest extends CacheTest {
+    /**
+     * @throws CacheException
+     */
     protected function setUp(): void {
-        try {
-            $this->cache = new Cache([
-                'storage' => 'redis',
-                'redis'   => ['host' => '127.0.0.1'],
-            ]);
-        } catch (CacheException $e) {
-            echo $e->getMessage();
-        }
+        $this->cache = new Cache([
+            'storage' => 'redis',
+            'redis'   => ['host' => '127.0.0.1'],
+        ]);
     }
 }

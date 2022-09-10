@@ -16,13 +16,12 @@ use RobiNN\Cache\Cache;
 use RobiNN\Cache\CacheException;
 
 final class APCuCacheTest extends CacheTest {
+    /**
+     * @throws CacheException
+     */
     protected function setUp(): void {
-        try {
-            $this->cache = new Cache([
-                'storage' => 'apcu',
-            ]);
-        } catch (CacheException $e) {
-            echo $e->getMessage();
-        }
+        $this->cache = new Cache([
+            'storage' => 'apcu',
+        ]);
     }
 }

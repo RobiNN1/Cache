@@ -62,6 +62,15 @@ class MemcachedStorage implements CacheInterface {
             $this->memcached->addServer($server['host'], (int) $server['port']);
         }
 
+        if (isset($server['sasl_username'], $server['sasl_password'])) {
+            if ($this->is_memcached) {
+                $this->memcached->setOption(Memcached::OPT_BINARY_PROTOCOL, true);
+                $this->memcached->setSaslAuthData($server['sasl_username'], $server['sasl_password']);
+            } else {
+                throw new CacheException('Memcache does not support SASL authentication, use Memcached extension.');
+            }
+        }
+
         if ($this->is_memcached) {
             $this->connection = $this->memcached->getVersion() || $this->memcached->getResultCode() === Memcached::RES_SUCCESS;
         } else {
