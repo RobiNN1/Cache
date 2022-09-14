@@ -17,14 +17,8 @@ use RobiNN\Cache\CacheException;
 use RobiNN\Cache\CacheInterface;
 
 class FileStorage implements CacheInterface {
-    /**
-     * @var string
-     */
     private readonly string $path;
 
-    /**
-     * @var string
-     */
     private readonly string $secret_key;
 
     /**

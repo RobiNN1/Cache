@@ -16,12 +16,9 @@ class Cache {
     /**
      * @const string Cache version
      */
-    final public const VERSION = '2.3.1';
+    final public const VERSION = '2.3.2';
 
-    /**
-     * @var CacheInterface
-     */
-    private CacheInterface $cache;
+    private readonly CacheInterface $cache;
 
     /**
      * @param array<string, mixed>  $config

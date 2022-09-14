@@ -18,14 +18,8 @@ use RobiNN\Cache\CacheException;
 use RobiNN\Cache\CacheInterface;
 
 class RedisStorage implements CacheInterface {
-    /**
-     * @var Redis
-     */
     private Redis $redis;
 
-    /**
-     * @var bool
-     */
     private bool $connection = true;
 
     /**
@@ -63,7 +57,13 @@ class RedisStorage implements CacheInterface {
 
         try {
             if (isset($server['password'])) {
-                $this->redis->auth($server['password']);
+                if (isset($server['username'])) {
+                    $credentials = [$server['username'], $server['password']];
+                } else {
+                    $credentials = $server['password'];
+                }
+
+                $this->redis->auth($credentials);
             }
         } catch (RedisException $e) {
             throw new CacheException(

@@ -18,20 +18,12 @@ use RobiNN\Cache\CacheException;
 use RobiNN\Cache\CacheInterface;
 
 class MemcachedStorage implements CacheInterface {
-    /**
-     * @var Memcache|Memcached
-     */
     private Memcache|Memcached $memcached;
 
-    /**
-     * @var bool
-     */
     private bool $connection = true;
 
     /**
-     * Check if is Memcache or Memcached.
-     *
-     * @var bool
+     * @var bool Check if is Memcache or Memcached.
      */
     private bool $is_memcached = false;
 
