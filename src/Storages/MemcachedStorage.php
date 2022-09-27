@@ -59,7 +59,7 @@ class MemcachedStorage implements CacheInterface {
                 $this->memcached->setOption(Memcached::OPT_BINARY_PROTOCOL, true);
                 $this->memcached->setSaslAuthData($server['sasl_username'], $server['sasl_password']);
             } else {
-                throw new CacheException('Memcache does not support SASL authentication, use Memcached extension.');
+                throw new CacheException('Memcache extension does not support SASL authentication.');
             }
         }
 
@@ -71,7 +71,7 @@ class MemcachedStorage implements CacheInterface {
         }
 
         if (!$this->connection) {
-            throw new CacheException(sprintf('Failed to connect to Memcache(d) server (%s).', $memcached_server));
+            throw new CacheException(sprintf('Failed to connect to Memcached server (%s).', $memcached_server));
         }
     }
 
