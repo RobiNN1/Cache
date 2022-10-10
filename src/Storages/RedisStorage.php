@@ -98,7 +98,7 @@ class RedisStorage implements CacheInterface {
      *
      * @return bool
      */
-    public function has(string $key): bool {
+    public function exists(string $key): bool {
         try {
             return (bool) $this->redis->exists($key);
         } catch (RedisException) {
@@ -160,13 +160,13 @@ class RedisStorage implements CacheInterface {
     /**
      * Delete all data from cache.
      *
-     * @return void
+     * @return bool
      */
-    public function flush(): void {
+    public function flush(): bool {
         try {
-            $this->redis->flushAll();
+            return $this->redis->flushAll();
         } catch (RedisException) {
-            //
+            return false;
         }
     }
 }

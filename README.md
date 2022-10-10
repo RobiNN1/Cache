@@ -38,7 +38,7 @@ $cache = new RobiNN\Cache\Cache([
 if ($cache->isConnected()) {
     $key = 'item-key';
 
-    if ($cache->has($key)) {
+    if ($cache->exists($key)) {
         $data = $cache->get($key);
     } else {
         $data = 'item-value';
@@ -54,7 +54,7 @@ if ($cache->isConnected()) {
 | Name        | Type  | Description                 |
 |-------------|-------|-----------------------------|
 | isConnected | bool  | Check connection            |
-| has         | bool  | Check if the data is cached |
+| exists      | bool  | Check if the data is cached |
 | set         | void  | Save data to cache          |
 | get         | mixed | Get data by key             |
 | delete      | bool  | Delete data by key          |

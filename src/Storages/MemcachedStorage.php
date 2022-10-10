@@ -91,7 +91,7 @@ class MemcachedStorage implements CacheInterface {
      *
      * @return bool
      */
-    public function has(string $key): bool {
+    public function exists(string $key): bool {
         return (bool) $this->memcached->get($key);
     }
 
@@ -137,9 +137,9 @@ class MemcachedStorage implements CacheInterface {
     /**
      * Delete all data from cache.
      *
-     * @return void
+     * @return bool
      */
-    public function flush(): void {
-        $this->memcached->flush();
+    public function flush(): bool {
+        return $this->memcached->flush();
     }
 }

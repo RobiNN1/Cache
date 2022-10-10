@@ -16,7 +16,7 @@ use RobiNN\Cache\Cache;
 use RobiNN\Cache\CacheException;
 
 final class FileCacheTest extends CacheTest {
-    private string $cache_path = __DIR__.'/cache_output';
+    private string $cache_path = __DIR__.'/file_cache';
 
     /**
      * @throws CacheException
@@ -28,10 +28,30 @@ final class FileCacheTest extends CacheTest {
         ]);
     }
 
-    protected function tearDown(): void {
-        if (file_exists($this->cache_path)) {
-            array_map('unlink', glob($this->cache_path.'/*'));
-            rmdir($this->cache_path);
+    /**
+     * Recursively remove folder and all files/subdirectories.
+     *
+     * @param string $dir Path to the folder.
+     */
+    public function rrmdir(string $dir): void {
+        if (is_dir($dir)) {
+            $objects = (array) scandir($dir);
+
+            foreach ($objects as $object) {
+                if ($object !== '.' && $object !== '..') {
+                    if (filetype($dir.'/'.$object) === 'dir') {
+                        $this->rrmdir($dir.'/'.$object);
+                    } else {
+                        unlink($dir.'/'.$object);
+                    }
+                }
+            }
+
+            rmdir($dir);
         }
+    }
+
+    protected function tearDown(): void {
+        $this->rrmdir($this->cache_path);
     }
 }

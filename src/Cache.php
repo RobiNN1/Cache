@@ -16,7 +16,7 @@ class Cache {
     /**
      * @const string Cache version
      */
-    final public const VERSION = '2.3.3';
+    final public const VERSION = '2.4.0';
 
     private readonly CacheInterface $cache;
 
@@ -56,8 +56,8 @@ class Cache {
      *
      * @return bool
      */
-    public function has(string $key): bool {
-        return $this->cache->has($key);
+    public function exists(string $key): bool {
+        return $this->cache->exists($key);
     }
 
     /**
@@ -98,9 +98,9 @@ class Cache {
     /**
      * Delete all data from cache.
      *
-     * @return void
+     * @return bool
      */
-    public function flush(): void {
-        $this->cache->flush();
+    public function flush(): bool {
+        return $this->cache->flush();
     }
 }

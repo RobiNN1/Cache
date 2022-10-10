@@ -27,7 +27,7 @@ interface CacheInterface {
      *
      * @return bool
      */
-    public function has(string $key): bool;
+    public function exists(string $key): bool;
 
     /**
      * Save data to cache.
@@ -61,7 +61,7 @@ interface CacheInterface {
     /**
      * Delete all data from cache.
      *
-     * @return void
+     * @return bool
      */
-    public function flush(): void;
+    public function flush(): bool;
 }

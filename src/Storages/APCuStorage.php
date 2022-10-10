@@ -41,7 +41,7 @@ class APCuStorage implements CacheInterface {
      *
      * @return bool
      */
-    public function has(string $key): bool {
+    public function exists(string $key): bool {
         return apcu_exists($key);
     }
 
@@ -83,9 +83,9 @@ class APCuStorage implements CacheInterface {
     /**
      * Delete all data from cache.
      *
-     * @return void
+     * @return bool
      */
-    public function flush(): void {
-        apcu_clear_cache();
+    public function flush(): bool {
+        return apcu_clear_cache();
     }
 }

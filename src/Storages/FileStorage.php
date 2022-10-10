@@ -52,7 +52,7 @@ class FileStorage implements CacheInterface {
      *
      * @return bool
      */
-    public function has(string $key): bool {
+    public function exists(string $key): bool {
         return is_file($this->getFileName($key));
     }
 
@@ -130,20 +130,24 @@ class FileStorage implements CacheInterface {
     /**
      * Delete all data from cache.
      *
-     * @return void
+     * @return bool
      */
-    public function flush(): void {
+    public function flush(): bool {
         $handle = opendir($this->path);
 
         if ($handle) {
             while (false !== ($file = readdir($handle))) {
-                if ($file !== '.' && $file !== '..') {
-                    @unlink($this->path.$file);
+                if ($file !== '.' && $file !== '..' && unlink($this->path.'/'.$file) === false) {
+                    return false;
                 }
             }
 
             closedir($handle);
+
+            return true;
         }
+
+        return false;
     }
 
     /**

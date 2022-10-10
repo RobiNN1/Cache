@@ -23,12 +23,12 @@ abstract class CacheTest extends TestCase {
     }
 
     public function testSetterGetter(): void {
-        $key = 'test-setter-getter';
+        $key = 'cache-test-setter-getter';
         $data = 'itemvalue';
 
         $this->cache->set($key, $data);
 
-        $this->assertTrue($this->cache->has($key));
+        $this->assertTrue($this->cache->exists($key));
 
         $this->assertSame($data, $this->cache->get($key));
 
@@ -36,13 +36,19 @@ abstract class CacheTest extends TestCase {
     }
 
     public function testDelete(): void {
-        $key = 'test-delete';
+        $key = 'cache-test-delete';
         $data = 'itemvalue2';
 
         $this->cache->set($key, $data);
 
         $this->assertTrue($this->cache->delete($key));
 
-        $this->assertFalse($this->cache->has($key));
+        $this->assertFalse($this->cache->exists($key));
+    }
+
+    public function testFlush(): void {
+        $this->cache->set('cache-test-flush', 'value');
+
+        $this->assertTrue($this->cache->flush());
     }
 }
