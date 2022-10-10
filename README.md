@@ -66,6 +66,14 @@ if ($cache->isConnected()) {
 
 ## Testing
 
+PHPUnit
+
 ```
 composer test
+```
+
+PHPStan
+
+```
+composer phpstan
 ```
