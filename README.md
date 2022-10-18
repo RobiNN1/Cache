@@ -16,14 +16,7 @@ $cache = new RobiNN\Cache\Cache([
     'storage'   => 'file', // apcu|file|memcached|redis
     'file'      => [
         'path' => __DIR__.'/cache',
-        //'secret' => 'cache_secret_key', // Optional
-    ],
-    'memcached' => [
-        'host' => '127.0.0.1', // Optional, when a path is specified
-        'port' => 11211, // Optional, when the default port is used
-        //'path' => '/var/run/memcached/memcached.sock', // Optional
-        //'sasl_username' => '', // Optional, when not using SASL
-        //'sasl_password' => '', // Optional, when not using SASL
+        //'secret' => 'secret_key', // Optional, for securing file names
     ],
     'redis'     => [
         'host' => '127.0.0.1', // Optional, when a path is specified
@@ -32,6 +25,13 @@ $cache = new RobiNN\Cache\Cache([
         //'username' => '', // Optional, requires Redis >= 6.0
         //'password' => '', // Optional
         //'path' => '/var/run/redis/redis-server.sock', // Optional
+    ],
+    'memcached' => [
+        'host' => '127.0.0.1', // Optional, when a path is specified
+        'port' => 11211, // Optional, when the default port is used
+        //'path' => '/var/run/memcached/memcached.sock', // Optional
+        //'sasl_username' => '', // Optional, when not using SASL
+        //'sasl_password' => '', // Optional, when not using SASL
     ],
 ]);
 

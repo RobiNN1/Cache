@@ -19,7 +19,7 @@ use RobiNN\Cache\CacheInterface;
 class FileStorage implements CacheInterface {
     private readonly string $path;
 
-    private readonly string $secret_key;
+    private readonly ?string $secret;
 
     /**
      * @param array<string, mixed> $config
@@ -33,7 +33,7 @@ class FileStorage implements CacheInterface {
             throw new CacheException(sprintf('Unable to create the "%s" directory.', $this->path));
         }
 
-        $this->secret_key = md5($config['secret'] ?? 'cache_secret_key');
+        $this->secret = $config['secret'] ?? null;
     }
 
     /**
@@ -158,7 +158,7 @@ class FileStorage implements CacheInterface {
      * @return string
      */
     private function getFileName(string $key): string {
-        $key = md5($key.$this->secret_key);
+        $key = $this->secret !== null ? md5($key.$this->secret) : $key;
 
         return realpath($this->path).'/'.$key.'.cache';
     }

@@ -16,7 +16,7 @@ class Cache {
     /**
      * @const string Cache version
      */
-    final public const VERSION = '2.4.0';
+    final public const VERSION = '2.4.1';
 
     private readonly CacheInterface $cache;
 
