@@ -35,6 +35,32 @@ abstract class CacheTest extends TestCase {
         $this->cache->delete($key);
     }
 
+    public function testDataTypes(): void {
+        $keys = [
+            'string' => 'Cache',
+            'int'    => 23,
+            'float'  => 23.99,
+            'bool'   => true,
+            'null'   => null,
+            'array'  => ['key1', 'key2'],
+        ];
+
+        foreach ($keys as $key => $value) {
+            $this->cache->set('pu-test-'.$key, $value);
+        }
+
+        $this->assertSame($keys['string'], $this->cache->get('pu-test-string'));
+        $this->assertSame($keys['int'], $this->cache->get('pu-test-int'));
+        $this->assertSame($keys['float'], $this->cache->get('pu-test-float'));
+        $this->assertSame($keys['bool'], $this->cache->get('pu-test-bool'));
+        $this->assertSame($keys['null'], $this->cache->get('pu-test-null'));
+        $this->assertSame($keys['array'], $this->cache->get('pu-test-array'));
+
+        foreach ($keys as $key => $value) {
+            $this->cache->delete('pu-test-'.$key);
+        }
+    }
+
     public function testDelete(): void {
         $key = 'cache-test-delete';
         $data = 'itemvalue2';

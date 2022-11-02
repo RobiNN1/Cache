@@ -37,6 +37,15 @@ class FileStorage implements CacheInterface {
     }
 
     /**
+     * Get path.
+     *
+     * @return string
+     */
+    public function getPath(): string {
+        return $this->path;
+    }
+
+    /**
      * Check connection.
      *
      * @return bool
@@ -91,23 +100,34 @@ class FileStorage implements CacheInterface {
      * @return mixed
      */
     public function get(string $key): mixed {
-        $file = $this->getFileName($key);
+        $data = $this->getRaw($key);
 
-        if (is_file($file)) {
-            try {
-                $data = json_decode((string) file_get_contents($file), true, 512, JSON_THROW_ON_ERROR);
-
-                if ($this->isExpired($data)) {
-                    $this->delete($key);
-                }
-
-                return unserialize($data['data'], ['allowed_classes' => false]);
-            } catch (JsonException $e) {
-                return $e->getMessage();
-            }
+        if (!$this->exists($key)) {
+            return false;
         }
 
-        return null;
+        if ($this->isExpired($data)) {
+            $this->delete($key);
+        }
+
+        return unserialize($data['data'], ['allowed_classes' => false]);
+    }
+
+    /**
+     * Get TTL.
+     *
+     * @param string $key
+     *
+     * @return int|false
+     */
+    public function ttl(string $key): int|false {
+        $data = $this->getRaw($key);
+
+        if (!$this->exists($key)) {
+            return false;
+        }
+
+        return ($data['time'] + $data['expire']) - time();
     }
 
     /**
@@ -133,21 +153,53 @@ class FileStorage implements CacheInterface {
      * @return bool
      */
     public function flush(): bool {
+        foreach ($this->keys() as $key) {
+            if (unlink($this->path.'/'.$key.'.cache') === false) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get all keys with data.
+     *
+     * @return array<int, string>
+     */
+    public function keys(): array {
+        $keys = [];
+
         $handle = opendir($this->path);
 
         if ($handle) {
             while (false !== ($file = readdir($handle))) {
-                if ($file !== '.' && $file !== '..' && unlink($this->path.'/'.$file) === false) {
-                    return false;
+                if ($file !== '.' && $file !== '..') {
+                    $keys[] = str_replace('.cache', '', $file);
                 }
             }
 
             closedir($handle);
-
-            return true;
         }
 
-        return false;
+        return $keys;
+    }
+
+    /**
+     * Get raw key data.
+     *
+     * @param string $key
+     *
+     * @return array<string, mixed>
+     */
+    public function getRaw(string $key): array {
+        $file = $this->getFileName($key);
+
+        try {
+            return json_decode((string) file_get_contents($file), true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            return [];
+        }
     }
 
     /**
