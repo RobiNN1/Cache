@@ -23,10 +23,11 @@ class FileStorage implements CacheInterface {
 
     /**
      * @param array<string, mixed> $config
+     * @param bool                 $remove_expired
      *
      * @throws CacheException
      */
-    public function __construct(array $config) {
+    public function __construct(array $config, bool $remove_expired = false) {
         $this->path = $config['path'];
 
         if (!is_dir($this->path) && false === @mkdir($this->path, 0777, true) && !is_dir($this->path)) {
@@ -34,6 +35,10 @@ class FileStorage implements CacheInterface {
         }
 
         $this->secret = $config['secret'] ?? null;
+
+        if ($remove_expired) {
+            $this->removeExpired();
+        }
     }
 
     /**
@@ -100,15 +105,15 @@ class FileStorage implements CacheInterface {
      * @return mixed
      */
     public function get(string $key): mixed {
-        $data = $this->getRaw($key);
-
         if (!$this->exists($key)) {
             return false;
         }
 
-        if ($this->isExpired($data)) {
+        if ($this->isExpired($key)) {
             $this->delete($key);
         }
+
+        $data = $this->getRaw($key);
 
         return unserialize($data['data'], ['allowed_classes' => false]);
     }
@@ -118,14 +123,10 @@ class FileStorage implements CacheInterface {
      *
      * @param string $key
      *
-     * @return int|false
+     * @return int
      */
-    public function ttl(string $key): int|false {
+    public function ttl(string $key): int {
         $data = $this->getRaw($key);
-
-        if (!$this->exists($key)) {
-            return false;
-        }
 
         return ($data['time'] + $data['expire']) - time();
     }
@@ -216,13 +217,28 @@ class FileStorage implements CacheInterface {
     }
 
     /**
+     * Remove all expired keys.
+     *
+     * @return void
+     */
+    public function removeExpired(): void {
+        foreach ($this->keys() as $key) {
+            if ($this->isExpired($key)) {
+                $this->delete($key);
+            }
+        }
+    }
+
+    /**
      * Check if the item is expired or not.
      *
-     * @param array<string, mixed> $data
+     * @param string $key
      *
      * @return bool
      */
-    private function isExpired(array $data): bool {
+    private function isExpired(string $key): bool {
+        $data = $this->getRaw($key);
+
         if (!isset($data['time']) && !isset($data['expire'])) {
             return false;
         }
