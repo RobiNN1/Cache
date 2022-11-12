@@ -23,11 +23,10 @@ class FileStorage implements CacheInterface {
 
     /**
      * @param array<string, mixed> $config
-     * @param bool                 $remove_expired
      *
      * @throws CacheException
      */
-    public function __construct(array $config, bool $remove_expired = false) {
+    public function __construct(array $config) {
         $this->path = $config['path'];
 
         if (!is_dir($this->path) && false === @mkdir($this->path, 0777, true) && !is_dir($this->path)) {
@@ -36,7 +35,7 @@ class FileStorage implements CacheInterface {
 
         $this->secret = $config['secret'] ?? null;
 
-        if ($remove_expired) {
+        if ($config['remove_expired'] ?? false) {
             $this->removeExpired();
         }
     }

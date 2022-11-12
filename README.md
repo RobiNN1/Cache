@@ -17,6 +17,7 @@ $cache = new RobiNN\Cache\Cache([
     'file'      => [
         'path' => __DIR__.'/cache',
         //'secret' => 'secret_key', // Optional, for securing file names
+        //'remove_expired' => true, // Optional, automatically remove all expired keys (it can affect performance)
     ],
     'redis'     => [
         'host' => '127.0.0.1', // Optional, when a path is specified
@@ -35,18 +36,16 @@ $cache = new RobiNN\Cache\Cache([
     ],
 ]);
 
-if ($cache->isConnected()) {
-    $key = 'item-key';
+$key = 'item-key';
 
-    if ($cache->exists($key)) {
-        $data = $cache->get($key);
-    } else {
-        $data = 'item-value';
-        $cache->set($key, $data);
-    }
-
-    print_r($data); // item-value
+if ($cache->exists($key)) {
+    $data = $cache->get($key);
+} else {
+    $data = 'item-value';
+    $cache->set($key, $data);
 }
+
+print_r($data); // item-value
 ```
 
 ## Methods
