@@ -82,22 +82,10 @@ class RedisStorage implements CacheInterface {
         }
     }
 
-    /**
-     * Check connection.
-     *
-     * @return bool
-     */
     public function isConnected(): bool {
         return $this->connection;
     }
 
-    /**
-     * Check if the data is cached.
-     *
-     * @param string $key
-     *
-     * @return bool
-     */
     public function exists(string $key): bool {
         try {
             return (bool) $this->redis->exists($key);
@@ -106,15 +94,6 @@ class RedisStorage implements CacheInterface {
         }
     }
 
-    /**
-     * Save data to cache.
-     *
-     * @param string $key
-     * @param mixed  $data
-     * @param int    $seconds
-     *
-     * @return void
-     */
     public function set(string $key, mixed $data, int $seconds = 0): void {
         try {
             if ($seconds > 0) {
@@ -127,13 +106,6 @@ class RedisStorage implements CacheInterface {
         }
     }
 
-    /**
-     * Get data by key.
-     *
-     * @param string $key
-     *
-     * @return mixed
-     */
     public function get(string $key): mixed {
         try {
             return unserialize((string) $this->redis->get($key), ['allowed_classes' => false]);
@@ -142,13 +114,6 @@ class RedisStorage implements CacheInterface {
         }
     }
 
-    /**
-     * Delete data by key.
-     *
-     * @param string $key
-     *
-     * @return bool
-     */
     public function delete(string $key): bool {
         try {
             return (bool) $this->redis->del($key);
@@ -157,11 +122,6 @@ class RedisStorage implements CacheInterface {
         }
     }
 
-    /**
-     * Delete all data from cache.
-     *
-     * @return bool
-     */
     public function flush(): bool {
         try {
             return $this->redis->flushAll();

@@ -16,7 +16,7 @@ class Cache {
     /**
      * @const string Cache version
      */
-    final public const VERSION = '2.4.3';
+    final public const VERSION = '2.4.4';
 
     private readonly CacheInterface $cache;
 
@@ -42,8 +42,6 @@ class Cache {
 
     /**
      * Check connection.
-     *
-     * @return bool
      */
     public function isConnected(): bool {
         return $this->cache->isConnected();
@@ -51,10 +49,6 @@ class Cache {
 
     /**
      * Check if the data is cached.
-     *
-     * @param string $key
-     *
-     * @return bool
      */
     public function exists(string $key): bool {
         return $this->cache->exists($key);
@@ -62,12 +56,6 @@ class Cache {
 
     /**
      * Save data to cache.
-     *
-     * @param string $key
-     * @param mixed  $data
-     * @param int    $seconds
-     *
-     * @return void
      */
     public function set(string $key, mixed $data, int $seconds = 0): void {
         $this->cache->set($key, $data, $seconds);
@@ -75,10 +63,6 @@ class Cache {
 
     /**
      * Get data by key.
-     *
-     * @param string $key
-     *
-     * @return mixed
      */
     public function get(string $key): mixed {
         return $this->cache->get($key);
@@ -86,10 +70,6 @@ class Cache {
 
     /**
      * Delete data by key.
-     *
-     * @param string $key
-     *
-     * @return bool
      */
     public function delete(string $key): bool {
         return $this->cache->delete($key);
@@ -97,8 +77,6 @@ class Cache {
 
     /**
      * Delete all data from cache.
-     *
-     * @return bool
      */
     public function flush(): bool {
         return $this->cache->flush();

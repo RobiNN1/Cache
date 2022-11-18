@@ -22,8 +22,7 @@
     "source": "https://github.com/RobiNN1/Cache"
   },
   "require": {
-    "php": ">=8.1",
-    "ext-json": "*"
+    "php": ">=8.1"
   },
   "require-dev": {
     "phpstan/phpstan": "^1.9",

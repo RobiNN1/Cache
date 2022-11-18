@@ -75,35 +75,14 @@ class MemcachedStorage implements CacheInterface {
         }
     }
 
-    /**
-     * Check connection.
-     *
-     * @return bool
-     */
     public function isConnected(): bool {
         return $this->connection;
     }
 
-    /**
-     * Check if the data is cached.
-     *
-     * @param string $key
-     *
-     * @return bool
-     */
     public function exists(string $key): bool {
         return (bool) $this->memcached->get($key);
     }
 
-    /**
-     * Save data to cache.
-     *
-     * @param string $key
-     * @param mixed  $data
-     * @param int    $seconds
-     *
-     * @return void
-     */
     public function set(string $key, mixed $data, int $seconds = 0): void {
         if ($this->is_memcached) {
             $this->memcached->set($key, serialize($data), $seconds);
@@ -112,33 +91,14 @@ class MemcachedStorage implements CacheInterface {
         }
     }
 
-    /**
-     * Get data by key.
-     *
-     * @param string $key
-     *
-     * @return mixed
-     */
     public function get(string $key): mixed {
         return unserialize($this->memcached->get($key), ['allowed_classes' => false]);
     }
 
-    /**
-     * Delete data by key.
-     *
-     * @param string $key
-     *
-     * @return bool
-     */
     public function delete(string $key): bool {
         return $this->memcached->delete($key);
     }
 
-    /**
-     * Delete all data from cache.
-     *
-     * @return bool
-     */
     public function flush(): bool {
         return $this->memcached->flush();
     }
