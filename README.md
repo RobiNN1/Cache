@@ -1,5 +1,7 @@
 # Simple cache
 
+Simple cache for PHP with support for Redis, Memcached, APCu and Files.
+
 ![Visitor Badge](https://visitor-badge.laobi.icu/badge?page_id=RobiNN1.Cache)
 
 ## Installation

@@ -1,6 +1,6 @@
 {
   "name": "robinn/cache",
-  "description": "Simple cache library.",
+  "description": "Simple cache for PHP with support for Redis, Memcached, APCu and Files.",
   "license": "MIT",
   "type": "library",
   "keywords": [
