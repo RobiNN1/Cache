@@ -13,9 +13,6 @@ declare(strict_types=1);
 namespace RobiNN\Cache;
 
 class Cache {
-    /**
-     * @const string Cache version
-     */
     final public const VERSION = '2.4.4';
 
     private readonly CacheInterface $cache;
