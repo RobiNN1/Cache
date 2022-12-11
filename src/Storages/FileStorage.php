@@ -29,7 +29,7 @@ class FileStorage implements CacheInterface {
     public function __construct(array $config) {
         $this->path = $config['path'];
 
-        if (!is_dir($this->path) && false === @mkdir($this->path, 0777, true) && !is_dir($this->path)) {
+        if (!is_dir($this->path) && @mkdir($this->path, 0777, true) === false && !is_dir($this->path)) {
             throw new CacheException(sprintf('Unable to create the "%s" directory.', $this->path));
         }
 
@@ -83,7 +83,7 @@ class FileStorage implements CacheInterface {
     public function ttl(string $key): int {
         $data = $this->getRaw($key);
 
-        return ($data['time'] + $data['expire']) - time();
+        return $data['time'] + $data['expire'] - time();
     }
 
     public function delete(string $key): bool {
@@ -117,7 +117,7 @@ class FileStorage implements CacheInterface {
         $handle = opendir($this->path);
 
         if ($handle) {
-            while (false !== ($file = readdir($handle))) {
+            while (($file = readdir($handle)) !== false) {
                 if ($file !== '.' && $file !== '..') {
                     $keys[] = str_replace('.cache', '', $file);
                 }
@@ -166,7 +166,7 @@ class FileStorage implements CacheInterface {
         $expired = false;
 
         if ((int) $data['expire'] !== 0) {
-            $expired = (time() - (int) $data['time']) > (int) $data['expire'];
+            $expired = time() - (int) $data['time'] > (int) $data['expire'];
         }
 
         if ($expired === true) {

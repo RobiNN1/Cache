@@ -28,6 +28,10 @@ final class FileCacheTest extends CacheTest {
         ]);
     }
 
+    protected function tearDown(): void {
+        $this->rrmdir($this->cache_path);
+    }
+
     /**
      * Recursively remove folder and all files/subdirectories.
      *
@@ -49,9 +53,5 @@ final class FileCacheTest extends CacheTest {
 
             rmdir($dir);
         }
-    }
-
-    protected function tearDown(): void {
-        $this->rrmdir($this->cache_path);
     }
 }

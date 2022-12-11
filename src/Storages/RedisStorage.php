@@ -102,7 +102,6 @@ class RedisStorage implements CacheInterface {
                 $this->redis->set($key, serialize($data));
             }
         } catch (RedisException) {
-            //
         }
     }
 
