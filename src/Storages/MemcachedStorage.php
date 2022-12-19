@@ -43,14 +43,9 @@ class MemcachedStorage implements CacheInterface {
         }
 
         if (isset($server['path'])) {
-            $memcached_server = $server['path'];
-
             $this->memcached->addServer($server['path'], 0);
         } else {
             $server['port'] ??= 11211;
-
-            $memcached_server = $server['host'].':'.$server['port'];
-
             $this->memcached->addServer($server['host'], (int) $server['port']);
         }
 
@@ -71,7 +66,8 @@ class MemcachedStorage implements CacheInterface {
         }
 
         if (!$this->connection) {
-            throw new CacheException(sprintf('Failed to connect to Memcached server (%s).', $memcached_server));
+            $connection = $server['path'] ?? $server['host'].':'.$server['port'];
+            throw new CacheException(sprintf('Failed to connect to Memcached server %s.', $connection));
         }
     }
 
@@ -83,12 +79,12 @@ class MemcachedStorage implements CacheInterface {
         return (bool) $this->memcached->get($key);
     }
 
-    public function set(string $key, mixed $data, int $seconds = 0): void {
+    public function set(string $key, mixed $data, int $seconds = 0): bool {
         if ($this->is_memcached) {
-            $this->memcached->set($key, serialize($data), $seconds);
-        } else {
-            $this->memcached->set($key, serialize($data), 0, $seconds);
+            return $this->memcached->set($key, serialize($data), $seconds);
         }
+
+        return $this->memcached->set($key, serialize($data), 0, $seconds);
     }
 
     public function get(string $key): mixed {

@@ -32,9 +32,10 @@ class Cache {
         ], $custom_storages);
 
         $storage = isset($storages[$config['storage']]) ? $config['storage'] : 'file';
-        $server_info = $config[$config['storage']] ?? [];
-        $cache_class = new ($storages[$storage])($server_info);
-        $this->cache = $cache_class instanceof CacheInterface ? $cache_class : new Storages\FileStorage($server_info);
+        $server_info = $config[$storage] ?? [];
+        $this->cache = is_subclass_of($storages[$storage], CacheInterface::class) ?
+            new ($storages[$storage])($server_info) :
+            new Storages\FileStorage($server_info);
     }
 
     /**
@@ -54,8 +55,8 @@ class Cache {
     /**
      * Save data to cache.
      */
-    public function set(string $key, mixed $data, int $seconds = 0): void {
-        $this->cache->set($key, $data, $seconds);
+    public function set(string $key, mixed $data, int $seconds = 0): bool {
+        return $this->cache->set($key, $data, $seconds);
     }
 
     /**

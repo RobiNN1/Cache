@@ -26,7 +26,7 @@ abstract class CacheTest extends TestCase {
         $key = 'cache-test-setter-getter';
         $data = 'itemvalue';
 
-        $this->cache->set($key, $data);
+        $this->assertTrue($this->cache->set($key, $data));
 
         $this->assertTrue($this->cache->exists($key));
 

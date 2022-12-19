@@ -52,7 +52,7 @@ class FileStorage implements CacheInterface {
         return is_file($this->getFileName($key)) && !$this->isExpired($key);
     }
 
-    public function set(string $key, mixed $data, int $seconds = 0): void {
+    public function set(string $key, mixed $data, int $seconds = 0): bool {
         $file = $this->getFileName($key);
 
         try {
@@ -64,9 +64,13 @@ class FileStorage implements CacheInterface {
 
             if (@file_put_contents($file, $json, LOCK_EX) === strlen((string) $json)) {
                 @chmod($file, 0777);
+
+                return true;
             }
-        } catch (JsonException $e) {
-            echo $e->getMessage();
+
+            return false;
+        } catch (JsonException) {
+            return false;
         }
     }
 

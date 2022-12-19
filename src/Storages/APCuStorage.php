@@ -33,8 +33,8 @@ class APCuStorage implements CacheInterface {
         return apcu_exists($key);
     }
 
-    public function set(string $key, mixed $data, int $seconds = 0): void {
-        apcu_store($key, serialize($data), $seconds);
+    public function set(string $key, mixed $data, int $seconds = 0): bool {
+        return apcu_store($key, serialize($data), $seconds);
     }
 
     public function get(string $key): mixed {

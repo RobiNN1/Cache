@@ -17,7 +17,7 @@ interface CacheInterface {
 
     public function exists(string $key): bool;
 
-    public function set(string $key, mixed $data, int $seconds = 0): void;
+    public function set(string $key, mixed $data, int $seconds = 0): bool;
 
     public function get(string $key): mixed;
 
