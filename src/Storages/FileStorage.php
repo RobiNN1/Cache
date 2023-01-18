@@ -87,6 +87,10 @@ class FileStorage implements CacheInterface {
     public function ttl(string $key): int {
         $data = $this->getRaw($key);
 
+        if ($data['expire'] === 0) {
+            return 0;
+        }
+
         return $data['time'] + $data['expire'] - time();
     }
 
