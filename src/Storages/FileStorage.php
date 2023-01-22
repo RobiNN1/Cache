@@ -17,9 +17,9 @@ use RobiNN\Cache\CacheException;
 use RobiNN\Cache\CacheInterface;
 
 class FileStorage implements CacheInterface {
-    private readonly string $path;
+    private string $path;
 
-    private readonly ?string $secret;
+    private ?string $secret;
 
     /**
      * @param array<string, mixed> $config
@@ -29,7 +29,7 @@ class FileStorage implements CacheInterface {
     public function __construct(array $config) {
         $this->path = $config['path'];
 
-        if (!is_dir($this->path) && @mkdir($this->path, 0777, true) === false && !is_dir($this->path)) {
+        if (!is_dir($this->path) && !mkdir($this->path, 0775, true)) {
             throw new CacheException(sprintf('Unable to create the "%s" directory.', $this->path));
         }
 
@@ -62,13 +62,7 @@ class FileStorage implements CacheInterface {
                 'data'   => serialize($data),
             ], JSON_THROW_ON_ERROR);
 
-            if (@file_put_contents($file, $json, LOCK_EX) === strlen((string) $json)) {
-                @chmod($file, 0777);
-
-                return true;
-            }
-
-            return false;
+            return file_put_contents($file, $json, LOCK_EX) !== false;
         } catch (JsonException) {
             return false;
         }
