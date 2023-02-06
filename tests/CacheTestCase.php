@@ -15,7 +15,7 @@ namespace Tests;
 use PHPUnit\Framework\TestCase;
 use RobiNN\Cache\Cache;
 
-abstract class CacheTest extends TestCase {
+abstract class CacheTestCase extends TestCase {
     protected Cache $cache;
 
     public function testConnection(): void {

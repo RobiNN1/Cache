@@ -15,7 +15,7 @@ namespace Tests;
 use RobiNN\Cache\Cache;
 use RobiNN\Cache\CacheException;
 
-final class FileCacheTest extends CacheTest {
+final class FileTest extends CacheTestCase {
     private string $cache_path = __DIR__.'/file_cache';
 
     /**

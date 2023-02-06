@@ -15,7 +15,7 @@ namespace Tests;
 use RobiNN\Cache\Cache;
 use RobiNN\Cache\CacheException;
 
-final class RedisCacheTest extends CacheTest {
+final class RedisTest extends CacheTestCase {
     /**
      * @throws CacheException
      */
