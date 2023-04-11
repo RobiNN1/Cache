@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace RobiNN\Cache;
 
 class Cache {
-    final public const VERSION = '2.5.0';
+    final public const VERSION = '2.6.0';
 
     private readonly CacheInterface $cache;
 
@@ -64,6 +64,21 @@ class Cache {
      */
     public function get(string $key): mixed {
         return $this->cache->get($key);
+    }
+
+    /**
+     * Get data or execute callable to store data.
+     */
+    public function remember(string $key, int $seconds, callable $callback): mixed {
+        if ($this->exists($key)) {
+            return $this->get($key);
+        }
+
+        $data = $callback();
+
+        $this->set($key, $data, $seconds);
+
+        return $data;
     }
 
     /**

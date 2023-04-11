@@ -1,6 +1,6 @@
 # Simple cache
 
-Simple cache for PHP with support for Redis, Memcached, APCu and Files.
+Simple cache for PHP with support for Redis, Memcached, APCu, and Files.
 
 ![Visitor Badge](https://visitor-badge.laobi.icu/badge?page_id=RobiNN1.Cache)
 
@@ -52,14 +52,15 @@ print_r($data); // item-value
 
 ## Methods
 
-| Name        | Return | Description                  |
-|-------------|--------|------------------------------|
-| isConnected | bool   | Check connection.            |
-| exists      | bool   | Check if the data is cached. |
-| set         | bool   | Save data to cache.          |
-| get         | mixed  | Get data by key.             |
-| delete      | bool   | Delete data by key.          |
-| flush       | bool   | Delete all data from cache.  |
+| Name        | Return | Description                                 |
+|-------------|--------|---------------------------------------------|
+| isConnected | bool   | Check connection.                           |
+| exists      | bool   | Check if the data is cached.                |
+| set         | bool   | Save data to cache.                         |
+| get         | mixed  | Get data by key.                            |
+| remember    | mixed  | Get data or execute callable to store data. |
+| delete      | bool   | Delete data by key.                         |
+| flush       | bool   | Delete all data from cache.                 |
 
 ## Requirements
 
