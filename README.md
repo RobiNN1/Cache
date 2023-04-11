@@ -47,6 +47,9 @@ if ($cache->exists($key)) {
     $cache->set($key, $data);
 }
 
+// or short way
+$data = $cache->remember($key, 0, fn () => 'item-value');
+
 print_r($data); // item-value
 ```
 
