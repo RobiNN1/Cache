@@ -47,23 +47,23 @@ if ($cache->exists($key)) {
     $cache->set($key, $data);
 }
 
-// or short way
-$data = $cache->remember($key, 0, fn () => 'item-value');
+// The above code can also be shortened to one line
+$data = $cache->remember($key, 'item-value');
 
 print_r($data); // item-value
 ```
 
 ## Methods
 
-| Name        | Return | Description                                 |
-|-------------|--------|---------------------------------------------|
-| isConnected | bool   | Check connection.                           |
-| exists      | bool   | Check if the data is cached.                |
-| set         | bool   | Save data to cache.                         |
-| get         | mixed  | Get data by key.                            |
-| remember    | mixed  | Get data or execute callable to store data. |
-| delete      | bool   | Delete data by key.                         |
-| flush       | bool   | Delete all data from cache.                 |
+| Name        | Return | Description                                |
+|-------------|--------|--------------------------------------------|
+| isConnected | bool   | Check connection.                          |
+| exists      | bool   | Check if the data is cached.               |
+| set         | bool   | Save data to cache.                        |
+| get         | mixed  | Get data by key.                           |
+| remember    | mixed  | Get the data or store if it is not cached. |
+| delete      | bool   | Delete data by key.                        |
+| flush       | bool   | Delete all data from cache.                |
 
 ## Requirements
 

@@ -65,7 +65,7 @@ abstract class CacheTestCase extends TestCase {
         $key = 'pu-test-remember';
         $data = 'itemvalue';
 
-        $this->assertSame($data, $this->cache->remember($key, 0, fn () => $data));
+        $this->assertSame($data, $this->cache->remember($key, $data));
         $this->assertSame($data, $this->cache->get($key));
     }
 

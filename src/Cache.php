@@ -67,14 +67,12 @@ class Cache {
     }
 
     /**
-     * Get data or execute callable to store data.
+     * Get the data or store if it is not cached.
      */
-    public function remember(string $key, int $seconds, callable $callback): mixed {
+    public function remember(string $key, mixed $data, int $seconds = 0): mixed {
         if ($this->exists($key)) {
             return $this->get($key);
         }
-
-        $data = $callback();
 
         $this->set($key, $data, $seconds);
 
