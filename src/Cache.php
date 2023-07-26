@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace RobiNN\Cache;
 
 class Cache {
-    final public const VERSION = '2.6.0';
+    final public const VERSION = '2.6.1';
 
     private readonly CacheInterface $cache;
 
@@ -24,12 +24,13 @@ class Cache {
      * @throws CacheException
      */
     public function __construct(array $config = [], array $custom_storages = []) {
-        $storages = array_merge([
+        $storages = [
             'apcu'      => Storages\APCuStorage::class,
             'file'      => Storages\FileStorage::class,
             'memcached' => Storages\MemcachedStorage::class,
             'redis'     => Storages\RedisStorage::class,
-        ], $custom_storages);
+            ...$custom_storages,
+        ];
 
         $storage = isset($storages[$config['storage']]) ? $config['storage'] : 'file';
         $server_info = $config[$storage] ?? [];
