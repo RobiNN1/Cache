@@ -35,30 +35,27 @@ abstract class CacheTestCase extends TestCase {
         $this->cache->delete($key);
     }
 
-    public function testDataTypes(): void {
-        $keys = [
-            'string' => 'Cache',
-            'int'    => 23,
-            'float'  => 23.99,
-            'bool'   => true,
-            'null'   => null,
-            'array'  => ['key1', 'key2'],
+    /**
+     * @return array<int, mixed>
+     */
+    public static function keysProvider(): array {
+        return [
+            ['string', 'Cache'],
+            ['int', 23],
+            ['float', 23.99],
+            ['bool', true],
+            ['null', null],
+            ['array', ['key1', 'key2']],
         ];
+    }
 
-        foreach ($keys as $key => $value) {
-            $this->cache->set('pu-test-'.$key, $value);
-        }
-
-        $this->assertSame($keys['string'], $this->cache->get('pu-test-string'));
-        $this->assertSame($keys['int'], $this->cache->get('pu-test-int'));
-        $this->assertSame($keys['float'], $this->cache->get('pu-test-float'));
-        $this->assertSame($keys['bool'], $this->cache->get('pu-test-bool'));
-        $this->assertSame($keys['null'], $this->cache->get('pu-test-null'));
-        $this->assertSame($keys['array'], $this->cache->get('pu-test-array'));
-
-        foreach ($keys as $key => $value) {
-            $this->cache->delete('pu-test-'.$key);
-        }
+    /**
+     * @dataProvider keysProvider
+     */
+    public function testDataTypes(string $type, mixed $value): void {
+        $this->cache->set('pu-test-'.$type, $value);
+        $this->assertSame($value, $this->cache->get('pu-test-'.$type));
+        $this->cache->delete('pu-test-'.$type);
     }
 
     public function testRemember(): void {

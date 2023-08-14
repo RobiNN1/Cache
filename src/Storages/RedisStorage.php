@@ -28,11 +28,11 @@ class RedisStorage implements CacheInterface {
      * @throws CacheException
      */
     public function __construct(array $server) {
-        if (extension_loaded('redis')) {
-            $this->redis = new Redis();
-        } else {
+        if (!extension_loaded('redis')) {
             throw new CacheException('Redis extension is not installed.');
         }
+
+        $this->redis = new Redis();
 
         $server['port'] ??= 6379;
 
