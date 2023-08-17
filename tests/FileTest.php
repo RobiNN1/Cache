@@ -36,8 +36,6 @@ final class FileTest extends CacheTestCase {
      * Recursively remove folder and all files/subdirectories.
      *
      * @param string $dir Path to the directory.
-     *
-     * @return void
      */
     public function rrmdir(string $dir): void {
         if (is_dir($dir)) {

@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace RobiNN\Cache\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RobiNN\Cache\Cache;
 
@@ -49,9 +50,7 @@ abstract class CacheTestCase extends TestCase {
         ];
     }
 
-    /**
-     * @dataProvider keysProvider
-     */
+    #[DataProvider('keysProvider')]
     public function testDataTypes(string $type, mixed $value): void {
         $this->cache->set('pu-test-'.$type, $value);
         $this->assertSame($value, $this->cache->get('pu-test-'.$type));
