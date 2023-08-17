@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-namespace Tests;
+namespace RobiNN\Cache\Tests;
 
 use RobiNN\Cache\Cache;
 use RobiNN\Cache\CacheException;
