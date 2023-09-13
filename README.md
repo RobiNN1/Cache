@@ -68,17 +68,3 @@ print_r($data); // item-value
 ## Requirements
 
 - PHP >= 8.2
-
-## Testing
-
-PHPUnit
-
-```
-composer test
-```
-
-PHPStan
-
-```
-composer phpstan
-```
