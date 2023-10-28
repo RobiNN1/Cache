@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the RobiNN\Cache package.
+ * This file is part of the RobiNN\Cache.
  * Copyright (c) Róbert Kelčák (https://kelcak.com/)
  */
 
