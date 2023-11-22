@@ -16,6 +16,10 @@ final class MemcachedTest extends CacheTestCase {
      * @throws CacheException
      */
     protected function setUp(): void {
+        if (!extension_loaded('memcache') || !extension_loaded('memcached')) {
+            $this->markTestSkipped('The memcache/memcached extension is not installed.');
+        }
+
         $this->cache = new Cache([
             'storage'   => 'memcached',
             'memcached' => ['host' => '127.0.0.1'],

@@ -16,6 +16,10 @@ final class RedisTest extends CacheTestCase {
      * @throws CacheException
      */
     protected function setUp(): void {
+        if (!extension_loaded('redis')) {
+            $this->markTestSkipped('The redis extension is not installed.');
+        }
+
         $this->cache = new Cache([
             'storage' => 'redis',
             'redis'   => ['host' => '127.0.0.1'],
