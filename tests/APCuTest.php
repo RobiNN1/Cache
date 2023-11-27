@@ -16,10 +16,6 @@ final class APCuTest extends CacheTestCase {
      * @throws CacheException
      */
     protected function setUp(): void {
-        if (!extension_loaded('apcu')) {
-            $this->markTestSkipped('The apcu extension is not installed.');
-        }
-
         $this->cache = new Cache([
             'storage' => 'apcu',
         ]);
