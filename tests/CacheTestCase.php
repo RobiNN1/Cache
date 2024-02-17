@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace RobiNN\Cache\Tests;
 
+use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RobiNN\Cache\Cache;
@@ -32,18 +33,13 @@ abstract class CacheTestCase extends TestCase {
         $this->cache->delete($key);
     }
 
-    /**
-     * @return array<int, mixed>
-     */
-    public static function keysProvider(): array {
-        return [
-            ['string', 'Cache'],
-            ['int', 23],
-            ['float', 23.99],
-            ['bool', true],
-            ['null', null],
-            ['array', ['key1', 'key2']],
-        ];
+    public static function keysProvider(): Iterator {
+        yield ['string', 'Cache'];
+        yield ['int', 23];
+        yield ['float', 23.99];
+        yield ['bool', true];
+        yield ['null', null];
+        yield ['array', ['key1', 'key2']];
     }
 
     #[DataProvider('keysProvider')]

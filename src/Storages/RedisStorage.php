@@ -14,7 +14,7 @@ use RobiNN\Cache\CacheException;
 use RobiNN\Cache\CacheInterface;
 
 class RedisStorage implements CacheInterface {
-    private Redis $redis;
+    private readonly Redis $redis;
 
     private bool $connection = true;
 

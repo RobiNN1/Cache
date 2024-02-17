@@ -13,9 +13,9 @@ use RobiNN\Cache\CacheException;
 use RobiNN\Cache\CacheInterface;
 
 class FileStorage implements CacheInterface {
-    private string $path;
+    private readonly string $path;
 
-    private ?string $secret;
+    private readonly ?string $secret;
 
     /**
      * @param array<string, mixed> $config
@@ -167,7 +167,7 @@ class FileStorage implements CacheInterface {
             $expired = time() - (int) $data['time'] > (int) $data['expire'];
         }
 
-        if ($expired === true) {
+        if ($expired) {
             $this->delete($key);
         }
 
