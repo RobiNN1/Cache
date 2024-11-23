@@ -12,10 +12,10 @@ use JsonException;
 use RobiNN\Cache\CacheException;
 use RobiNN\Cache\CacheInterface;
 
-class FileStorage implements CacheInterface {
-    private readonly string $path;
+readonly class FileStorage implements CacheInterface {
+    private string $path;
 
-    private readonly ?string $secret;
+    private ?string $secret;
 
     /**
      * @param array<string, mixed> $config
