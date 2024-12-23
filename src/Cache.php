@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace RobiNN\Cache;
 
 class Cache {
-    final public const VERSION = '2.6.3';
+    final public const VERSION = '2.6.4';
 
     private readonly CacheInterface $cache;
 

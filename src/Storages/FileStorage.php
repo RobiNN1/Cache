@@ -112,11 +112,9 @@ readonly class FileStorage implements CacheInterface {
     public function keys(): array {
         $keys = [];
 
-        $handle = opendir($this->path);
-
-        if ($handle) {
-            while (($file = readdir($handle)) !== false) {
-                if ($file !== '.' && $file !== '..') {
+        if (is_dir($this->path) && ($handle = opendir($this->path))) {
+            while (false !== ($file = readdir($handle))) {
+                if (str_ends_with($file, '.cache')) {
                     $keys[] = str_replace('.cache', '', $file);
                 }
             }
