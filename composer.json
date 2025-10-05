@@ -25,8 +25,8 @@
     "php": ">=8.2"
   },
   "require-dev": {
-    "phpstan/phpstan": "^2.0",
-    "phpunit/phpunit": "^11.4"
+    "phpstan/phpstan": "^2.1",
+    "phpunit/phpunit": "^11.5"
   },
   "suggest": {
     "ext-apcu": "Required to use the APCu cache driver.",
