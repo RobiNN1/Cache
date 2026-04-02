@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace RobiNN\Cache;
 
 class Cache {
-    final public const VERSION = '2.6.4';
+    final public const string VERSION = '2.6.4';
 
     private readonly CacheInterface $cache;
 
@@ -84,7 +84,7 @@ class Cache {
     }
 
     /**
-     * Delete all data from cache.
+     * Delete all data from the cache.
      */
     public function flush(): bool {
         return $this->cache->flush();

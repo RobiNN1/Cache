@@ -40,11 +40,7 @@ class RedisStorage implements CacheInterface {
             }
 
             if (isset($server['password'])) {
-                if (isset($server['username'])) {
-                    $credentials = [$server['username'], $server['password']];
-                } else {
-                    $credentials = $server['password'];
-                }
+                $credentials = isset($server['username']) ? [$server['username'], $server['password']] : $server['password'];
 
                 $this->redis->auth($credentials);
             }
@@ -52,7 +48,7 @@ class RedisStorage implements CacheInterface {
             $this->redis->select($server['database'] ?? 0);
         } catch (RedisException $e) {
             $connection = $server['path'] ?? $server['host'].':'.$server['port'];
-            throw new CacheException($e->getMessage().' ['.$connection.']');
+            throw new CacheException($e->getMessage().' ['.$connection.']', $e->getCode(), $e);
         }
     }
 

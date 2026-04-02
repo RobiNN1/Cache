@@ -95,13 +95,8 @@ readonly class FileStorage implements CacheInterface {
     }
 
     public function flush(): bool {
-        foreach ($this->keys() as $key) {
-            if (unlink($this->path.'/'.$key.'.cache') === false) {
-                return false;
-            }
-        }
+        return array_all($this->keys(), fn ($key): bool => unlink($this->path.'/'.$key.'.cache'));
 
-        return true;
     }
 
     /**
