@@ -52,6 +52,7 @@ readonly class FileStorage implements CacheInterface {
     public function set(string $key, mixed $data, int $seconds = 0): bool {
         try {
             $json = json_encode([
+                'key'    => $key,
                 'time'   => time(),
                 'expire' => $seconds,
                 'data'   => serialize($data),
@@ -97,16 +98,25 @@ readonly class FileStorage implements CacheInterface {
     }
 
     public function flush(): bool {
-        return array_all($this->keys(), fn (string $name): bool => @unlink($this->path.'/'.$name.'.cache'));
+        return array_all($this->files(), static fn (string $file): bool => @unlink($file));
     }
 
     /**
+     * Get all keys with data.
+     *
+     * Returns original key names, which requires reading every cache file.
+     * Falls back to the file name for files created before the key name was stored.
+     *
      * @return array<int, string>
      */
     public function keys(): array {
-        $files = glob($this->path.'/*.cache') ?: [];
+        $keys = [];
 
-        return array_map(static fn (string $file): string => basename($file, '.cache'), $files);
+        foreach ($this->files() as $file) {
+            $keys[] = (string) ($this->readFile($file)['key'] ?? basename($file, '.cache'));
+        }
+
+        return $keys;
     }
 
     /**
@@ -117,13 +127,18 @@ readonly class FileStorage implements CacheInterface {
     }
 
     public function removeExpired(): void {
-        foreach ($this->keys() as $name) {
-            $file = $this->path.'/'.$name.'.cache';
-
+        foreach ($this->files() as $file) {
             if ($this->isExpired($this->readFile($file))) {
                 @unlink($file);
             }
         }
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function files(): array {
+        return glob($this->path.'/*.cache') ?: [];
     }
 
     /**

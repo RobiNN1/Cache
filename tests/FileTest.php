@@ -10,6 +10,7 @@ namespace RobiNN\Cache\Tests;
 
 use RobiNN\Cache\Cache;
 use RobiNN\Cache\CacheException;
+use RobiNN\Cache\Storages\FileStorage;
 
 final class FileTest extends CacheTestCase {
     private string $cache_path = __DIR__.'/file_cache';
@@ -26,6 +27,41 @@ final class FileTest extends CacheTestCase {
 
     protected function tearDown(): void {
         $this->rrmdir($this->cache_path);
+    }
+
+    /**
+     * @throws CacheException
+     */
+    public function testKeysReturnOriginalNames(): void {
+        $filecache = new FileStorage(['path' => $this->cache_path]);
+
+        $filecache->set('plain-key', 'a');
+        $filecache->set('user:1', 'b'); // The file name gets sanitized.
+
+        $keys = $filecache->keys();
+        sort($keys);
+
+        $this->assertSame(['plain-key', 'user:1'], $keys);
+        $this->assertSame('b', $filecache->get('user:1'));
+    }
+
+    /**
+     * @throws CacheException
+     */
+    public function testKeysWithSecret(): void {
+        $filecache = new FileStorage(['path' => $this->cache_path, 'secret' => 'secret_key']);
+
+        $filecache->set('plain-key', 'a');
+        $filecache->set('user:1', 'b');
+
+        $keys = $filecache->keys();
+        sort($keys);
+
+        $this->assertSame(['plain-key', 'user:1'], $keys);
+        $this->assertSame('b', $filecache->get('user:1'));
+
+        $this->assertTrue($filecache->flush());
+        $this->assertSame([], $filecache->keys());
     }
 
     /**
