@@ -56,7 +56,7 @@ readonly class FileStorage implements CacheInterface {
                 'time'   => time(),
                 'expire' => $seconds,
                 'data'   => serialize($data),
-            ], JSON_THROW_ON_ERROR);
+            ], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
             return file_put_contents($this->getFileName($key), $json, LOCK_EX) !== false;
         } catch (JsonException) {
