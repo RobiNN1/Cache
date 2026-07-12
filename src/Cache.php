@@ -11,7 +11,7 @@ namespace RobiNN\Cache;
 use Closure;
 
 class Cache {
-    final public const string VERSION = '2.7.1';
+    final public const string VERSION = '2.7.2';
 
     private readonly CacheInterface $cache;
 

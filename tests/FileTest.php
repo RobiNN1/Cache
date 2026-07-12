@@ -65,6 +65,26 @@ final class FileTest extends CacheTestCase {
     }
 
     /**
+     * @throws CacheException
+     */
+    public function testAccessByFileNameWithoutSecret(): void {
+        $secured = new FileStorage(['path' => $this->cache_path, 'secret' => 'secret_key']);
+        $secured->set('user:1', 'data', 60);
+
+        $unsecured = new FileStorage(['path' => $this->cache_path]);
+        $keys = $unsecured->keys();
+
+        $this->assertSame(['user:1'], array_values($keys)); // Original names are always readable.
+        $this->assertFalse($unsecured->get('user:1')); // But the key itself cannot be mapped without the secret.
+
+        $name = (string) array_key_first($keys);
+
+        $this->assertSame('data', $unsecured->get($name));
+        $this->assertSame(60, $unsecured->ttl($name));
+        $this->assertTrue($unsecured->delete($name));
+    }
+
+    /**
      * Recursively remove folder and all files/subdirectories.
      *
      * @param string $dir Path to the directory.

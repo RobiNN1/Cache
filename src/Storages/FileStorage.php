@@ -92,7 +92,7 @@ readonly class FileStorage implements CacheInterface {
     }
 
     public function delete(string $key): bool {
-        $file = $this->getFileName($key);
+        $file = $this->findFile($key);
 
         return is_file($file) && @unlink($file);
     }
@@ -102,18 +102,19 @@ readonly class FileStorage implements CacheInterface {
     }
 
     /**
-     * Get all keys with data.
+     * Get all keys with data, as [file_name => original_key].
      *
      * Returns original key names, which requires reading every cache file.
      * Falls back to the file name for files created before the key name was stored.
      *
-     * @return array<int, string>
+     * @return array<string, string>
      */
     public function keys(): array {
         $keys = [];
 
         foreach ($this->files() as $file) {
-            $keys[] = (string) ($this->readFile($file)['key'] ?? basename($file, '.cache'));
+            $name = basename($file, '.cache');
+            $keys[$name] = (string) ($this->readFile($file)['key'] ?? $name);
         }
 
         return $keys;
@@ -123,7 +124,7 @@ readonly class FileStorage implements CacheInterface {
      * @return array<string, mixed>
      */
     public function getRaw(string $key): array {
-        return $this->readFile($this->getFileName($key));
+        return $this->readFile($this->findFile($key));
     }
 
     public function removeExpired(): void {
@@ -193,10 +194,24 @@ readonly class FileStorage implements CacheInterface {
             $name = md5($key.$this->secret);
         } else {
             // Keep file names safe (no path traversal), a hash suffix prevents collisions between sanitized keys.
-            $name = (string) preg_replace('/[^\w.-]+/', '-', $key);
+            $name = preg_replace('/[^\w.-]+/', '-', $key);
             $name = $name !== $key ? $name.'-'.substr(md5($key), 0, 8) : $name;
         }
 
         return $this->path.'/'.$name.'.cache';
+    }
+
+    private function findFile(string $key): string {
+        $file = $this->getFileName($key);
+
+        if (!is_file($file) && preg_match('/^[\w.-]+$/', $key) === 1) {
+            $literal = $this->path.'/'.$key.'.cache';
+
+            if (is_file($literal)) {
+                return $literal;
+            }
+        }
+
+        return $file;
     }
 }
