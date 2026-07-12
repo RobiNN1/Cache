@@ -33,6 +33,9 @@ abstract class CacheTestCase extends TestCase {
         $this->cache->delete($key);
     }
 
+    /**
+     * @return Iterator<(array<int, array<int, string>> | array<int, bool> | array<int, float> | array<int, int> | array<int, null> | array<int, string>)>
+     */
     public static function keysProvider(): Iterator {
         yield ['string', 'Cache'];
         yield ['int', 23];
@@ -55,6 +58,25 @@ abstract class CacheTestCase extends TestCase {
 
         $this->assertSame($data, $this->cache->remember($key, $data));
         $this->assertSame($data, $this->cache->get($key));
+
+        $this->cache->delete($key);
+    }
+
+    public function testRememberClosure(): void {
+        $key = 'pu-test-remember-closure';
+        $calls = 0;
+        $callback = static function () use (&$calls): string {
+            $calls++;
+
+            return 'itemvalue';
+        };
+
+        $this->assertSame('itemvalue', $this->cache->remember($key, $callback));
+        $this->assertSame('itemvalue', $this->cache->remember($key, $callback));
+        $this->assertSame(1, $calls); // The closure runs only on a cache miss.
+        $this->assertSame('itemvalue', $this->cache->get($key));
+
+        $this->cache->delete($key);
     }
 
     public function testDelete(): void {

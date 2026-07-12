@@ -84,7 +84,9 @@ class MemcachedStorage implements CacheInterface {
     }
 
     public function get(string $key): mixed {
-        return unserialize($this->memcached->get($key), ['allowed_classes' => false]);
+        $data = $this->memcached->get($key);
+
+        return is_string($data) ? unserialize($data, ['allowed_classes' => false]) : false;
     }
 
     public function delete(string $key): bool {

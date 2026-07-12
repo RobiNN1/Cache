@@ -23,12 +23,13 @@ readonly class FileStorage implements CacheInterface {
      * @throws CacheException
      */
     public function __construct(array $config) {
-        $this->path = $config['path'];
+        $path = $config['path'] ?? throw new CacheException('The "path" config option is required for the file storage.');
 
-        if (!is_dir($this->path) && !mkdir($this->path, 0775, true)) {
-            throw new CacheException(sprintf('Unable to create the "%s" directory.', $this->path));
+        if (!is_dir($path) && !@mkdir($path, 0775, true) && !is_dir($path)) {
+            throw new CacheException(sprintf('Unable to create the "%s" directory.', $path));
         }
 
+        $this->path = realpath($path) ?: $path;
         $this->secret = $config['secret'] ?? null;
 
         if ($config['remove_expired'] ?? false) {
@@ -45,12 +46,10 @@ readonly class FileStorage implements CacheInterface {
     }
 
     public function exists(string $key): bool {
-        return is_file($this->getFileName($key)) && !$this->isExpired($key);
+        return $this->getValidData($key) !== [];
     }
 
     public function set(string $key, mixed $data, int $seconds = 0): bool {
-        $file = $this->getFileName($key);
-
         try {
             $json = json_encode([
                 'time'   => time(),
@@ -58,112 +57,131 @@ readonly class FileStorage implements CacheInterface {
                 'data'   => serialize($data),
             ], JSON_THROW_ON_ERROR);
 
-            return file_put_contents($file, $json, LOCK_EX) !== false;
+            return file_put_contents($this->getFileName($key), $json, LOCK_EX) !== false;
         } catch (JsonException) {
             return false;
         }
     }
 
     public function get(string $key): mixed {
-        if (!$this->exists($key)) {
+        $data = $this->getValidData($key);
+
+        if ($data === []) {
             return false;
         }
 
-        $data = $this->getRaw($key);
-
-        return unserialize($data['data'], ['allowed_classes' => false]);
+        return unserialize((string) ($data['data'] ?? ''), ['allowed_classes' => false]);
     }
 
+    /**
+     * Get the number of seconds until the key expires, 0 if it never expires or -1 if it does not exist.
+     */
     public function ttl(string $key): int {
         $data = $this->getRaw($key);
 
-        if ($data['expire'] === 0) {
+        if (!isset($data['time'], $data['expire'])) {
+            return -1;
+        }
+
+        if ((int) $data['expire'] === 0) {
             return 0;
         }
 
-        return $data['time'] + $data['expire'] - time();
+        return (int) $data['time'] + (int) $data['expire'] - time();
     }
 
     public function delete(string $key): bool {
         $file = $this->getFileName($key);
 
-        if (is_file($file)) {
-            return @unlink($file);
-        }
-
-        return false;
+        return is_file($file) && @unlink($file);
     }
 
     public function flush(): bool {
-        return array_all($this->keys(), fn ($key): bool => unlink($this->path.'/'.$key.'.cache'));
-
+        return array_all($this->keys(), fn (string $name): bool => @unlink($this->path.'/'.$name.'.cache'));
     }
 
     /**
-     * Get all keys with data.
-     *
      * @return array<int, string>
      */
     public function keys(): array {
-        $keys = [];
+        $files = glob($this->path.'/*.cache') ?: [];
 
-        if (is_dir($this->path) && ($handle = opendir($this->path))) {
-            while (false !== ($file = readdir($handle))) {
-                if (str_ends_with($file, '.cache')) {
-                    $keys[] = str_replace('.cache', '', $file);
-                }
-            }
-
-            closedir($handle);
-        }
-
-        return $keys;
+        return array_map(static fn (string $file): string => basename($file, '.cache'), $files);
     }
 
     /**
-     * Get raw key data.
-     *
      * @return array<string, mixed>
      */
     public function getRaw(string $key): array {
-        $file = $this->getFileName($key);
+        return $this->readFile($this->getFileName($key));
+    }
+
+    public function removeExpired(): void {
+        foreach ($this->keys() as $name) {
+            $file = $this->path.'/'.$name.'.cache';
+
+            if ($this->isExpired($this->readFile($file))) {
+                @unlink($file);
+            }
+        }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function readFile(string $file): array {
+        if (!is_file($file)) {
+            return [];
+        }
 
         try {
-            return json_decode((string) file_get_contents($file), true, 512, JSON_THROW_ON_ERROR);
+            $data = json_decode((string) file_get_contents($file), true, 512, JSON_THROW_ON_ERROR);
+
+            return is_array($data) ? $data : [];
         } catch (JsonException) {
             return [];
         }
     }
 
-    public function removeExpired(): void {
-        foreach ($this->keys() as $key) {
-            $this->isExpired($key);
+    /**
+     * Get key data in a single read, expired keys are deleted and treated as missing.
+     *
+     * @return array<string, mixed>
+     */
+    private function getValidData(string $key): array {
+        $data = $this->getRaw($key);
+
+        if ($data === []) {
+            return [];
         }
+
+        if ($this->isExpired($data)) {
+            $this->delete($key);
+
+            return [];
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function isExpired(array $data): bool {
+        $expire = (int) ($data['expire'] ?? 0);
+
+        return $expire !== 0 && time() - (int) ($data['time'] ?? 0) > $expire;
     }
 
     private function getFileName(string $key): string {
-        $key = $this->secret !== null ? md5($key.$this->secret) : $key;
-
-        return realpath($this->path).'/'.$key.'.cache';
-    }
-
-    private function isExpired(string $key): bool {
-        $data = $this->getRaw($key);
-
-        if (!isset($data['time']) && !isset($data['expire'])) {
-            return false;
+        if ($this->secret !== null) {
+            $name = md5($key.$this->secret);
+        } else {
+            // Keep file names safe (no path traversal), a hash suffix prevents collisions between sanitized keys.
+            $name = (string) preg_replace('/[^\w.-]+/', '-', $key);
+            $name = $name !== $key ? $name.'-'.substr(md5($key), 0, 8) : $name;
         }
 
-        $expired = false;
-
-        if ((int) $data['expire'] !== 0) {
-            $expired = time() - (int) $data['time'] > (int) $data['expire'];
-        }
-
-        if ($expired) {
-            $this->delete($key);
-        }
-
-        return $expired;
+        return $this->path.'/'.$name.'.cache';
     }
 }

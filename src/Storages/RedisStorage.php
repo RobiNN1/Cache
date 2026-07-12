@@ -16,8 +16,6 @@ use RobiNN\Cache\CacheInterface;
 class RedisStorage implements CacheInterface {
     private readonly Redis $redis;
 
-    private bool $connection = true;
-
     /**
      * @param array<string, mixed> $server
      *
@@ -53,7 +51,11 @@ class RedisStorage implements CacheInterface {
     }
 
     public function isConnected(): bool {
-        return $this->connection;
+        try {
+            return (bool) $this->redis->ping();
+        } catch (RedisException) {
+            return false;
+        }
     }
 
     public function exists(string $key): bool {

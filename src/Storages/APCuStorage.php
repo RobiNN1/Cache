@@ -34,7 +34,9 @@ class APCuStorage implements CacheInterface {
     }
 
     public function get(string $key): mixed {
-        return unserialize(apcu_fetch($key), ['allowed_classes' => false]);
+        $data = apcu_fetch($key);
+
+        return is_string($data) ? unserialize($data, ['allowed_classes' => false]) : false;
     }
 
     public function delete(string $key): bool {

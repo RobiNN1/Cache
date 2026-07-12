@@ -50,6 +50,9 @@ if ($cache->exists($key)) {
 // The above code can also be shortened to one line
 $data = $cache->remember($key, 'item-value');
 
+// Or with a closure that is executed only on a cache miss
+$data = $cache->remember($key, static fn () => 'item-value');
+
 print_r($data); // item-value
 ```
 
@@ -67,4 +70,4 @@ print_r($data); // item-value
 
 ## Requirements
 
-- PHP >= 8.2
+- PHP >= 8.4

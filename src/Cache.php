@@ -8,8 +8,10 @@ declare(strict_types=1);
 
 namespace RobiNN\Cache;
 
+use Closure;
+
 class Cache {
-    final public const string VERSION = '2.6.4';
+    final public const string VERSION = '2.7.0';
 
     private readonly CacheInterface $cache;
 
@@ -28,11 +30,16 @@ class Cache {
             ...$custom_storages,
         ];
 
-        $storage = isset($storages[$config['storage']]) ? $config['storage'] : 'file';
-        $server_info = $config[$storage] ?? [];
-        $this->cache = is_subclass_of($storages[$storage], CacheInterface::class) ?
-            new ($storages[$storage])($server_info) :
-            new Storages\FileStorage($server_info);
+        $storage = $config['storage'] ?? 'file';
+        $storage = isset($storages[$storage]) ? $storage : 'file';
+
+        $class = $storages[$storage];
+
+        if (!is_subclass_of($class, CacheInterface::class)) {
+            throw new CacheException(sprintf('Storage class "%s" must implement %s.', $class, CacheInterface::class));
+        }
+
+        $this->cache = new $class($config[$storage] ?? []);
     }
 
     /**
@@ -65,10 +72,16 @@ class Cache {
 
     /**
      * Get the data or store if it is not cached.
+     *
+     * When a closure is passed, it is called (and its result cached) only on a cache miss.
      */
     public function remember(string $key, mixed $data, int $seconds = 0): mixed {
         if ($this->exists($key)) {
             return $this->get($key);
+        }
+
+        if ($data instanceof Closure) {
+            $data = $data();
         }
 
         $this->set($key, $data, $seconds);
